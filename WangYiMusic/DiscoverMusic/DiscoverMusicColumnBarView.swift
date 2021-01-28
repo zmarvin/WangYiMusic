@@ -155,7 +155,6 @@ class DiscoverMusicColumnBarView: UIScrollView {
         if let index = self.subviews.firstIndex(of: btn) {
             self.responder(index)
         }
-        
     }
 }
 

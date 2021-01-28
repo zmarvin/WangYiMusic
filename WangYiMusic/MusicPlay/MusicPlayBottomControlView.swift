@@ -33,7 +33,6 @@ class MusicPlayBottomControlView: UIView {
         nextBtn.setImage(UIImage(named: "em_vehicle_btn_next_prs"), for: UIControl.State.normal)
         menuBtn.setImage(UIImage(named: "em_vehicle_btn_src_white"), for: UIControl.State.normal)
         loopBtn.setImage(UIImage(named: "em_vehicle_loop_prs"), for: UIControl.State.normal)
-        loopBtn.tintColor = .white
         
         controlBtn.imageView?.contentMode = .scaleAspectFit
         lastBtn.imageView?.contentMode = .scaleAspectFit
