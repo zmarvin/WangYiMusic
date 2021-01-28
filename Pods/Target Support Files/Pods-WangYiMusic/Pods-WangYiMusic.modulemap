@@ -1,0 +1,6 @@
+framework module Pods_WangYiMusic {
+  umbrella header "Pods-WangYiMusic-umbrella.h"
+
+  export *
+  module * { export * }
+}

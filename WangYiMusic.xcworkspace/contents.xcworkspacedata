@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:ijkplayer-ios/ios/IJKMediaPlayer/IJKMediaPlayer.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:WangYiMusic.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
+</Workspace>
