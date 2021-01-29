@@ -35,25 +35,18 @@ class PlayListPlazaContentCommonController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        let header = MJRefreshGifHeader(refreshingBlock: { [unowned self] in
+        self.collectionView.mj_header = MJRefreshGifHeader(custom: { [unowned self] in
             API.get_playList(limit:18,cat:self.categoryModel.name).subscribe(onSuccess: {modes in
                 self.dataModels = modes
                 self.collectionView.reloadData()
                 self.collectionView.mj_header?.endRefreshing()
             }).disposed(by: self.disposeBag)
-        })
-        header.setTitle("加载中...", for: MJRefreshState.idle)
-        header.setTitle("加载中...", for: MJRefreshState.pulling)
-        header.setTitle("加载中...", for: MJRefreshState.refreshing)
-        header.setImages(WY_LIST_LOADING_IMAGES, for: MJRefreshState.refreshing)
-        header.lastUpdatedTimeLabel?.isHidden = true
-        self.collectionView.mj_header = header
-        header.beginRefreshing()
+        }).refresh()
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

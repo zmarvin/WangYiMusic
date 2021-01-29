@@ -89,7 +89,7 @@ class MusicPlayController: UIViewController {
         backgroundEffectView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }
-        
+
         topBarView.snp.makeConstraints { (make) in
             make.top.equalTo(WY_STATUS_BAR_HEIGHT)
             make.left.right.equalToSuperview()
@@ -192,19 +192,25 @@ class MusicPlayController: UIViewController {
             self?.bottomControlView.progressBarView.rightTimeLable.text = self?.formateTime(duration)
         }).disposed(by: disposeBag)
         
-        MusicPlayManager.shared.audioPlayer.rx.observe(\.state).delaySubscription(RxTimeInterval.seconds(1), scheduler: MainScheduler.instance).map{$0 == .playing}.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] isPlaying in
+        MusicPlayManager.shared.rx.observe(\.isPlaying).delaySubscription(RxTimeInterval.seconds(Int(musicPlayControllerTransitionAnimateDuration)), scheduler: MainScheduler.instance).observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] isPlaying in
             if isPlaying {
                 self?.discCollectionView.startAnimation()
                 self?.bottomControlView.controlBtn.isSelected = true
-                UIView.animate(withDuration: 0.3) {
+                UIView.animate(withDuration: 0.2) {
                     self?.needleImageView.transform = CGAffineTransform(rotationAngle: 0)
                 }
             }else{
                 self?.discCollectionView.pauseAnimation()
                 self?.bottomControlView.controlBtn.isSelected = false
-                UIView.animate(withDuration: 0.3) {
+                UIView.animate(withDuration: 0.2) {
                     self?.needleImageView.transform = CGAffineTransform(rotationAngle: CGFloat(-Double.pi/8))
                 }
+            }
+        }).disposed(by: disposeBag)
+        
+        discCollectionView.rx.observe(\.isScrolling).subscribe(onNext: { [weak self] isScrolling in
+            UIView.animate(withDuration: 0.2) {
+                self?.needleImageView.transform = CGAffineTransform(rotationAngle: isScrolling ? CGFloat(-Double.pi/8) : 0)
             }
         }).disposed(by: disposeBag)
     }

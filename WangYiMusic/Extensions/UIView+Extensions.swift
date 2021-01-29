@@ -76,4 +76,12 @@ extension UIView {
         
         return true
     }
+    
+    func viewController() -> UIViewController? {
+        if let responder = self.next ,let vc = responder as? UIViewController {
+            return vc
+        }else{
+            return self.superview?.viewController()
+        }
+    }
 }

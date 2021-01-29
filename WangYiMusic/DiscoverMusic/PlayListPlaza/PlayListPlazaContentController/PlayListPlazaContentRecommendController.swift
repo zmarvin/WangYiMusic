@@ -46,32 +46,23 @@ class PlayListPlazaContentRecommendController: UIViewController, UICollectionVie
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         self.setUpView()
         self.setUpData()
+        self.setUpGesture()
     }
     
     func setUpData() {
-        
-        let header = MJRefreshGifHeader(refreshingBlock: { [unowned self] in
+        self.underCollectionView.mj_header = MJRefreshGifHeader(custom: { [unowned self] in
             API.get_playList(limit:18,cat: nil).subscribe(onSuccess: { models in
-                self.topCarouselModels.append(contentsOf: models[0...2])
-                let count = models.count
-                self.underCollectionModels.append(contentsOf: models[3..<count])
+                self.topCarouselModels = (0...2).map{models[$0]}
+                self.underCollectionModels = (3..<models.count).map{models[$0]}
                 self.topCarouselView.reloadData()
                 self.underCollectionView.reloadData()
                 self.underCollectionView.mj_header?.endRefreshing()
             }, onFailure: { err in
                 self.underCollectionView.mj_header?.endRefreshing()
             }).disposed(by: disposeBag)
-        })
-        header.setTitle("加载中...", for: MJRefreshState.idle)
-        header.setTitle("加载中...", for: MJRefreshState.pulling)
-        header.setTitle("加载中...", for: MJRefreshState.refreshing)
-        header.setImages(WY_LIST_LOADING_IMAGES, for: MJRefreshState.refreshing)
-        header.lastUpdatedTimeLabel?.isHidden = true
-        self.underCollectionView.mj_header = header
-        header.beginRefreshing()
+        }).refresh()
     }
     
     func setUpView() {
@@ -85,6 +76,13 @@ class PlayListPlazaContentRecommendController: UIViewController, UICollectionVie
         underCollectionView.backgroundColor = .white
         underCollectionView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
+        }
+    }
+    
+    func setUpGesture() {// 解决uiscrollview和系统的返手势冲突
+        if let gesture = self.navigationController?.interactivePopGestureRecognizer {
+            self.underCollectionView.panGestureRecognizer.require(toFail: gesture)
+            self.topCarouselView.panGestureRecognizer.require(toFail: gesture)
         }
     }
     

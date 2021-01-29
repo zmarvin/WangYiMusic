@@ -18,15 +18,6 @@ class DiscoverMusicController: UITableViewController,DiscoverMusicCellDelegate, 
     var overallModels : [DiscoverMusicModel]?
     var personalTailorMiddleRandomSection : Int = 0
     var newDishAlbumHeaderBtns : [UIButton] = []
-    override init(style: UITableView.Style) {
-        super.init(style: .plain)
-        self.tableView.showsVerticalScrollIndicator = false
-        self.tableView.separatorStyle = .none
-        self.nav_BackBarButtonColor = .custom
-    }
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     var banner : LLCycleScrollView = {
         var banner = LLCycleScrollView.llCycleScrollViewWithFrame(CGRect.zero)
         banner.autoScroll = true
@@ -42,6 +33,16 @@ class DiscoverMusicController: UITableViewController,DiscoverMusicCellDelegate, 
         banner.pageControlPosition = .center
         return banner
     }()
+    
+    override init(style: UITableView.Style) {
+        super.init(style: .plain)
+        self.tableView.showsVerticalScrollIndicator = false
+        self.tableView.separatorStyle = .none
+        self.nav_BackBarButtonColor = .custom
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -63,7 +64,8 @@ class DiscoverMusicController: UITableViewController,DiscoverMusicCellDelegate, 
     }
 
     func setUpData() {
-        let header = MJRefreshGifHeader(refreshingBlock: { [unowned self] in
+        
+        self.tableView.mj_header = MJRefreshGifHeader(custom: { [unowned self] in
             API.get_superZip.subscribe(onSuccess: { overallModels in
                 let sectionModels = overallModels.sorted {sectionSortedArry.firstIndex(of: $0.ID)! < sectionSortedArry.firstIndex(of: $1.ID)!}// 排序
                 self.overallModels = sectionModels
@@ -81,14 +83,7 @@ class DiscoverMusicController: UITableViewController,DiscoverMusicCellDelegate, 
             }, onFailure: { error in
                 print(error)
             }).disposed(by: disposeBag)
-        })
-        header.setTitle("加载中...", for: MJRefreshState.idle)
-        header.setTitle("加载中...", for: MJRefreshState.pulling)
-        header.setTitle("加载中...", for: MJRefreshState.refreshing)
-        header.setImages(WY_LIST_LOADING_IMAGES, for: MJRefreshState.refreshing)
-        header.lastUpdatedTimeLabel?.isHidden = true
-        self.tableView.mj_header = header
-        header.beginRefreshing()
+        }).refresh()
     }
     
     var searchController : SearchViewController = SearchViewController(searchResultsController: nil)
@@ -164,7 +159,6 @@ class DiscoverMusicController: UITableViewController,DiscoverMusicCellDelegate, 
 //                    self.navigationController?.pushViewController(EMStationTableViewController(), animated: true)
                 default: break
             }
-
         }
         return columnBarView
     }
@@ -386,7 +380,7 @@ class DiscoverMusicController: UITableViewController,DiscoverMusicCellDelegate, 
         }
         
         calendarCell.detailTextLabel?.text = calendarModel.title
-        calendarCell.rightImageView.kf.setImageAspectFillScale(with: url)
+        calendarCell.rightImageView.kf.setImage(with: url)
     }
     func discoverMusicCell(calendarDidSelectRowAt indexPath: IndexPath){
         guard let overallModel = overallModels?[indexPath.section]else { return}
@@ -436,7 +430,7 @@ class DiscoverMusicController: UITableViewController,DiscoverMusicCellDelegate, 
         let models = overallModel?.data
         guard let model = models?[index] else {return}
         guard let m = model as? RecommendMV else{return}
-        print("跳转精品音乐视频")
+        print("跳转精品音乐视频\(m.id)")
     }
     
     // MARK: -- 主列表

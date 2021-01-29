@@ -36,7 +36,7 @@ class PlayListPlazaContentBoutiqueController: UICollectionViewController,UIViewC
     
     @objc func requestData(cat: String?) {
         
-        let header = MJRefreshGifHeader(refreshingBlock: { [unowned self] in
+        self.collectionView.mj_header = MJRefreshGifHeader(custom: { [unowned self] in
             API.get_boutiquePlayList(limit:18 ,cat: cat).subscribe(onSuccess: {modes in
                 self.dataModels = modes
                 self.collectionView.reloadData()
@@ -44,14 +44,7 @@ class PlayListPlazaContentBoutiqueController: UICollectionViewController,UIViewC
             }, onFailure: {err in
                 self.collectionView.mj_header?.endRefreshing()
             }).disposed(by: disposeBag)
-        })
-        header.setTitle("加载中...", for: MJRefreshState.idle)
-        header.setTitle("加载中...", for: MJRefreshState.pulling)
-        header.setTitle("加载中...", for: MJRefreshState.refreshing)
-        header.setImages(WY_LIST_LOADING_IMAGES, for: MJRefreshState.refreshing)
-        header.lastUpdatedTimeLabel?.isHidden = true
-        self.collectionView.mj_header = header
-        header.beginRefreshing()
+        }).refresh()
     }
     
     required init?(coder: NSCoder) {

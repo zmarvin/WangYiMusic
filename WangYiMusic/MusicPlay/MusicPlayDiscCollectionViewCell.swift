@@ -55,7 +55,7 @@ class MusicPlayDiscCollectionViewCell: UICollectionViewCell, CAAnimationDelegate
         self.animationDidStart = animationDidStart
         self.discImageView.layer.removeAllAnimations()
         self.setUpAnimation(fromValue:fromValue)
-        if MusicPlayManager.shared.isPlayingMusic {
+        if MusicPlayManager.shared.isPlaying {
             self.resumeAnimation()
         }else{
             self.pauseAnimation()
@@ -111,6 +111,10 @@ class MusicPlayDiscCollectionViewCell: UICollectionViewCell, CAAnimationDelegate
     func animationDidStart(_ anim: CAAnimation) {
         self.animationDidStart?()
         self.animationDidStart = nil
+    }
+    
+    func isAnimating() -> Bool {
+        return self.discImageView.layer.speed == 1
     }
     
     required init?(coder: NSCoder) {

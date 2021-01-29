@@ -11,7 +11,7 @@ import HandyJSON
 
 class Music: NSObject, HandyJSON,NSCoding,NSSecureCoding{
     required override init() {}
-    
+
     static func == (lhs: Music, rhs: Music) -> Bool {
         return lhs.id == rhs.id
     }

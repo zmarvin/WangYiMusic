@@ -11,8 +11,7 @@ import Moya
 import SwiftyJSON
 import RxSwift
 
-class RxDiscoverMusicAPI {
-    let provider = MoyaProvider<MyService>()
+class RxDiscoverMusicAPI :EMBaseRxAPI{
     lazy var get_superZip = Single.zip(get_zip1, get_zip2).map { (arg0) -> [DiscoverMusicModel] in
         let ((m1, m2, m3, m4, m5, m6, m7, m8), (n1, n2, n3, n4)) = arg0
         return [m1, m2, m3, m4, m5, m6, m7, m8, n1, n2, n3, n4]
@@ -36,10 +35,6 @@ class RxDiscoverMusicAPI {
         get_djprogramCollection()
     )
 
-    func exampleError(_ error: String, location: String = "\(#file):\(#line)") -> NSError {
-        return NSError(domain: "ExampleError", code: -1, userInfo: [NSLocalizedDescriptionKey: "\(location): \(error)"])
-    }
-    
     func get_Banner() -> Single<[EMBannerModel]>{
         func jsonToModel(data:Data) throws -> [EMBannerModel]{
             let tempJson = JSON(data).dictionaryObject

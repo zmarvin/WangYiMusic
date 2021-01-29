@@ -77,8 +77,6 @@ enum DiscoverMusicSectionType : String{
     
     var sectionHeight : CGFloat{
         switch self {
-        case .recommendMusic :
-            return 160.0
         case .recommendMV :
             return 240
         case .rankingList:
@@ -90,7 +88,7 @@ enum DiscoverMusicSectionType : String{
         case .yuncunKTV:
             return 180
         default:
-            return 175
+            return 180
         }
     }
     

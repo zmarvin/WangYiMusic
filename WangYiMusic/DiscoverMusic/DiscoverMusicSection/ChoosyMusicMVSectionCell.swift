@@ -14,7 +14,7 @@ class ChoosyMusicMVSectionCell: UICollectionViewCell {
     var player : IJKMediaPlayback?
     var mvUrl : String = ""{
         didSet{
-//            if self.contentView.subviews.count > 0 {return}
+            return
             guard self.player == nil else { return }
             guard let url = URL(string: mvUrl) else { return }
             self.createPlayer(with: url)
@@ -69,7 +69,6 @@ class ChoosyMusicMVSectionCell: UICollectionViewCell {
         if isPlay {
             self.player?.stop()
         }
-        
     }
     func pause() {
         guard let isPlay = self.player?.isPlaying() else { return }

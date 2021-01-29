@@ -46,6 +46,7 @@ class RankingListSectionCell: UITableViewCell {
             if let textLabel = self.textLabel {
                 let tempF = textLabel.frame
                 textLabel.frame = CGRect(x: tempF.origin.x - 20, y: tempF.origin.y, width: tempF.width, height: tempF.height)
+                textLabel.snp.removeConstraints()
                 textLabel.snp.makeConstraints { (make) in
                     make.top.equalTo(tempF.origin.y)
                     make.width.equalTo(tempF.width)

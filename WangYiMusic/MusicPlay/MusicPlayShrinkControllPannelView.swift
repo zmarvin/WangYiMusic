@@ -139,7 +139,7 @@ class MusicPlayShrinkControllPannelView: UIButton, UINavigationControllerDelegat
         self.animationDidStart = animationDidStart
         self.discImageView.layer.removeAllAnimations()
         self.setUpAnimation(fromValue: fromValue)
-        if MusicPlayManager.shared.isPlayingMusic {
+        if MusicPlayManager.shared.isPlaying {
             self.resumeAnimation()
         }else{
             self.pauseAnimation()
@@ -226,8 +226,9 @@ class MusicPlayShrinkControllPannelView: UIButton, UINavigationControllerDelegat
                 // 当TAB_BAR和shrinkConrollPannel同时显示时，修改viewcontroller.view.frame.height - selfHeightNotIncludeSafeBottom
                 let topHeight = WY_NAV_BAR_HEIGHT + WY_STATUS_BAR_HEIGHT
                 let bottomHeight = WY_TAB_BAR_HEIGHT + WY_SAFE_BOTTOM_MARGIN + self.selfHeightNotIncludeSafeBottom
+                let height = WY_SCREEN_HEIGHT - topHeight - bottomHeight
                 viewController.viewDidLayoutSubviews_Inject{
-                    viewController.view.frame.size.height = WY_SCREEN_HEIGHT - topHeight - bottomHeight
+                    viewController.view.frame.size.height = height
                 }
             }
         }

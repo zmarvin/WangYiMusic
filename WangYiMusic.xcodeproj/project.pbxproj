@@ -127,6 +127,7 @@
 		04093DAF25BF0D9500AE90CD /* EMStationModule.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 04093DAB25BF0D9500AE90CD /* EMStationModule.bundle */; };
 		04093DB025BF0D9500AE90CD /* EMTabbarIcon.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 04093DAC25BF0D9500AE90CD /* EMTabbarIcon.bundle */; };
 		04093DC225BF133B00AE90CD /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 04093DC125BF133B00AE90CD /* libc++.tbd */; };
+		0430AF3F25C3A0D300CF76E3 /* MJRefreshGifHeader+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0430AF3E25C3A0D300CF76E3 /* MJRefreshGifHeader+Extensions.swift */; };
 		0460B78725C28E12005A3703 /* SearchRxAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0460B78625C28E12005A3703 /* SearchRxAPI.swift */; };
 		0460B78B25C29138005A3703 /* MVInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0460B78A25C29138005A3703 /* MVInfoModel.swift */; };
 		72F167432B4E2F5CB4FF89B7 /* Pods_WangYiMusic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64B9B6B9D01B08C207C4C914 /* Pods_WangYiMusic.framework */; };
@@ -258,6 +259,7 @@
 		04093DAB25BF0D9500AE90CD /* EMStationModule.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = EMStationModule.bundle; sourceTree = "<group>"; };
 		04093DAC25BF0D9500AE90CD /* EMTabbarIcon.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = EMTabbarIcon.bundle; sourceTree = "<group>"; };
 		04093DC125BF133B00AE90CD /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		0430AF3E25C3A0D300CF76E3 /* MJRefreshGifHeader+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MJRefreshGifHeader+Extensions.swift"; sourceTree = "<group>"; };
 		0460B78625C28E12005A3703 /* SearchRxAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchRxAPI.swift; sourceTree = "<group>"; };
 		0460B78A25C29138005A3703 /* MVInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MVInfoModel.swift; sourceTree = "<group>"; };
 		64B9B6B9D01B08C207C4C914 /* Pods_WangYiMusic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WangYiMusic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -468,6 +470,7 @@
 			isa = PBXGroup;
 			children = (
 				04093CAA25BF06E700AE90CD /* UIView+Extensions.swift */,
+				0430AF3E25C3A0D300CF76E3 /* MJRefreshGifHeader+Extensions.swift */,
 				04093CAF25BF06E700AE90CD /* Kingfisher+Extensions.swift */,
 				04093CAB25BF06E700AE90CD /* UIColor+Extensions.swift */,
 				04093CAC25BF06E700AE90CD /* UIImage+Extensions.swift */,
@@ -733,6 +736,7 @@
 				04093C7925BF06A700AE90CD /* PlayListPlazaCarouselLayout.swift in Sources */,
 				04093CA225BF06A700AE90CD /* NewDishAlbumSectionCell.swift in Sources */,
 				04093D5525BF070200AE90CD /* LLPillPageControl.swift in Sources */,
+				0430AF3F25C3A0D300CF76E3 /* MJRefreshGifHeader+Extensions.swift in Sources */,
 				04093D7C25BF08C800AE90CD /* WangYiMusic-Prefix.swift in Sources */,
 				04093C7E25BF06A700AE90CD /* DiscoverMusicColumnBarView.swift in Sources */,
 				04093D8025BF091500AE90CD /* UIColor+imageMostColor.m in Sources */,

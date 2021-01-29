@@ -75,7 +75,7 @@ class DiscoverMusicCell: UITableViewCell,UICollectionViewDataSource,UICollection
         layout.minimumLineSpacing = 10
         layout.minimumInteritemSpacing = 10
         let itemWidth = (UIScreen.main.bounds.width - 60)/3 
-        let itemHeight = sectionType.sectionHeight
+        let itemHeight = sectionType.sectionHeight - 20
         layout.itemSize = CGSize(width: itemWidth, height: itemHeight)
         layout.sectionInset = UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15)
         layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
@@ -115,7 +115,7 @@ class DiscoverMusicCell: UITableViewCell,UICollectionViewDataSource,UICollection
         layout.minimumLineSpacing = 10
         layout.minimumInteritemSpacing = 10
         let itemWidth = (UIScreen.main.bounds.width - 60)/3
-        let itemHeight = sectionType.sectionHeight
+        let itemHeight = sectionType.sectionHeight - 20
         layout.itemSize = CGSize(width: itemWidth, height: itemHeight)
         layout.sectionInset = UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15)
         layout.scrollDirection = UICollectionView.ScrollDirection.horizontal

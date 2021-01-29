@@ -25,19 +25,9 @@ class MusicPlayManager : NSObject{
         }
     }
     var currentPlayingMusics:[Music]?
-    
     var currentPlayingIndex : Int{
-        if let playingMusics = MusicPlayManager.shared.currentPlayingMusics ,let playingMusic = MusicPlayManager.shared.currentPlayingMusic{
-            return playingMusics.firstIndex(of: playingMusic) ?? 0
-        }else{
-            return 0
-        }
-    }
-    
-    private var isSwitchMusic = false
-    
-    var isPlayingMusic : Bool{
-        self.audioPlayer.state == .playing
+        guard let musics = currentPlayingMusics, let music = currentPlayingMusic else { return 0 }
+        return musics.firstIndex(where: {$0 == music}) ?? 0
     }
     
     lazy var audioPlayer: STKAudioPlayer = {
@@ -50,6 +40,16 @@ class MusicPlayManager : NSObject{
         audioPlayer.delegate = self
         return audioPlayer
     }()
+    
+    private var isSwitchMusic = false
+    @objc dynamic var isPlaying : Bool = false
+    
+    override init() {
+        super.init()
+        self.audioPlayer.rx.observe(\.state).map{$0 == [.playing,.running] || $0 == [.buffering,.running]}.subscribe(onNext: {[unowned self] isPlaying in
+            self.isPlaying = isPlaying
+        }).disposed(by: disposeBag)
+    }
     
     func playMusic() {
         
@@ -104,8 +104,8 @@ class MusicPlayManager : NSObject{
     var loopType : PlayMusicControlLoopType = .cycle
     private func nextMusic() -> Music?{
         return switchMusic { (pm, list) -> Music? in
-            guard let index = list.firstIndex(of: pm) else { return nil }
-            if pm == list.last  ,index == list.count-1{
+            guard let index = list.firstIndex(where: {$0 == pm}) else { return nil }
+            if pm == list.last,index == list.count-1{
                 return list[0]
             }else{
                 return list[index+1]
@@ -115,7 +115,7 @@ class MusicPlayManager : NSObject{
     
     private func lastMusic() -> Music?{
         return switchMusic { (pm, list) -> Music? in
-            guard let index = list.firstIndex(of: pm) else { return nil }
+            guard let index = list.firstIndex(where: {$0 == pm}) else { return nil }
             if pm == list.first,index == 0{
                 return list.last
             }else{
@@ -162,18 +162,14 @@ class MusicPlayManager : NSObject{
         let file = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).last!
         let currentPlayingMusicFilePath = (file as NSString).appendingPathComponent("CurrentPlayingMusic.data")
         let currentPlayingMusicsFilePath = (file as NSString).appendingPathComponent("CurrentPlayingMusics.data")
-        
-//        let currentPlayingMusicData = NSKeyedArchiver.archivedData(withRootObject: currentPlayingMusic)
-//        let currentPlayingMusicsData = NSKeyedArchiver.archivedData(withRootObject: currentPlayingMusics)
+
         let isSuccess1 = NSKeyedArchiver.archiveRootObject(currentPlayingMusic, toFile: currentPlayingMusicFilePath)
         let isSuccess2 = NSKeyedArchiver.archiveRootObject(currentPlayingMusics, toFile: currentPlayingMusicsFilePath)
-        var isArchiveMusicSuccess = false
-        if isSuccess1 && isSuccess2 {
+        let isArchiveMusicSuccess = isSuccess1 && isSuccess2
+        if isArchiveMusicSuccess {
             print("写入成功")
-            isArchiveMusicSuccess = true
         }else{
-            isArchiveMusicSuccess = false
-            print("CurrentPlayingMusic写入失败")
+            print("写入失败")
         }
         return isArchiveMusicSuccess
     }
@@ -214,6 +210,7 @@ extension MusicPlayManager : STKAudioPlayerDelegate {
     }
     
     func audioPlayer(_ audioPlayer: STKAudioPlayer, stateChanged state: STKAudioPlayerState, previousState: STKAudioPlayerState) {
+        print("stateChanged:\(state),previousState:\(previousState)")
     }
     
     func audioPlayer(_ audioPlayer: STKAudioPlayer, didFinishPlayingQueueItemId queueItemId: NSObject, with stopReason: STKAudioPlayerStopReason, andProgress progress: Double, andDuration duration: Double) {

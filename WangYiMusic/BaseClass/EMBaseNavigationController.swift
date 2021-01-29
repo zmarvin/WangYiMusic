@@ -47,9 +47,7 @@ class EMBaseNavigationController: UINavigationController, UIGestureRecognizerDel
     
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
-        if self.responds(to: #selector(getter: interactivePopGestureRecognizer)) {
-            self.interactivePopGestureRecognizer?.delegate = self
-        }
+        self.interactivePopGestureRecognizer?.delegate = self
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -57,10 +55,7 @@ class EMBaseNavigationController: UINavigationController, UIGestureRecognizerDel
     }
     // MARK: UIGestureRecognizerDelegate
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        if self.children.count == 1 {
-            return false
-        }
-        return true
+        return self.children.count > 1
     }
     
     override func pushViewController(_ viewController: UIViewController, animated: Bool) {

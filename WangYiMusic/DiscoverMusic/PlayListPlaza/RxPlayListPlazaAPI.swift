@@ -12,11 +12,8 @@ import SwiftyJSON
  
 import RxSwift
 
-class RxPlayListPlazaAPI {
-    let provider = MoyaProvider<MyService>()
-    func exampleError(_ error: String, location: String = "\(#file):\(#line)") -> NSError {
-        return NSError(domain: "ExampleError", code: -1, userInfo: [NSLocalizedDescriptionKey: "\(location): \(error)"])
-    }
+class RxPlayListPlazaAPI: EMBaseRxAPI{
+
     func get_playList(limit: Int,cat:String?) -> Single<[PlayListPlazaModel]>{
         func jsonToModel(data:Data) throws -> [PlayListPlazaModel]{
             let tempJson = JSON(data).dictionaryObject

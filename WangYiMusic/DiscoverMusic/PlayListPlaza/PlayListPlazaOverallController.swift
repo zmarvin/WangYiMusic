@@ -14,7 +14,8 @@ class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegat
     
     let segmentView = GXSegmentTitleView()
     let pageViewController = UIPageViewController(transitionStyle: UIPageViewController.TransitionStyle.scroll, navigationOrientation: UIPageViewController.NavigationOrientation.horizontal, options: nil)
-
+    let allCategoryBtn = UIButton()
+    
     lazy var inPlazaCategoryModels: [PlayListPlazaCategoryModel] = {
         var categoryModels = [PlayListPlazaCategoryModel]()
         let model1 = PlayListPlazaCategoryModel()
@@ -74,6 +75,12 @@ class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegat
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setUpView()
+        self.setUpState()
+        self.setUpGesture()
+    }
+    
+    func setUpView() {
         self.navigationItem.title = "歌单广场"
         
         let items: [String] = inPlazaCategoryModels.map{$0.name}
@@ -88,13 +95,12 @@ class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegat
         config.isShowBottomLine = false
         let allCategoryBtnWidth : CGFloat = 70
         let overlapW : CGFloat = 30
-        segmentView.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width-(allCategoryBtnWidth-overlapW), height: 50)
+        segmentView.frame = CGRect(x: 0, y: 0, width: WY_SCREEN_WIDTH - (allCategoryBtnWidth-overlapW), height: 50)
         segmentView.setupSegmentTitleView(config: config, titles: items)
         segmentView.delegate = self
         self.view.addSubview(segmentView)
         segmentView.backgroundColor = .white
         
-        let allCategoryBtn = UIButton()
         allCategoryBtn.setImage(UIImage(named: "em_playlist_allcategory"), for: UIControl.State.normal)
         allCategoryBtn.imageView?.contentMode = .scaleAspectFit
         self.view.insertSubview(allCategoryBtn, aboveSubview: segmentView)
@@ -111,12 +117,6 @@ class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegat
         gradientLayer.endPoint = CGPoint(x: 1, y: 0);
         gradientLayer.frame = CGRect(x: 0, y: 0, width: allCategoryBtn.bounds.width * 0.4, height: allCategoryBtn.bounds.height)
         allCategoryBtn.layer.addSublayer(gradientLayer)
-        allCategoryBtn.rx.tap.subscribe(onNext: {
-            // MARK: push 所有分类控制器
-            let vc = PlayListPlazaOverallCategoryController()
-            vc.inPlazaCategoryModels = self.inPlazaCategoryModels
-            self.navigationController?.pushViewController(vc, animated: true)
-        }).disposed(by: disposeBag)
         
         pageViewController.edgesForExtendedLayout = UIRectEdge.left
         pageViewController.dataSource = self
@@ -127,9 +127,24 @@ class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegat
             make.left.bottom.right.equalToSuperview()
             make.top.equalTo(segmentView.snp.bottom)
         }
-        self.segmentTitleView(segmentView, at: 0)
-        
     }
+    
+    func setUpState() {
+        allCategoryBtn.rx.tap.subscribe(onNext: {[unowned self] in
+            // MARK: push 所有分类控制器
+            let vc = PlayListPlazaOverallCategoryController()
+            vc.inPlazaCategoryModels = self.inPlazaCategoryModels
+            self.navigationController?.pushViewController(vc, animated: true)
+        }).disposed(by: disposeBag)
+        self.segmentTitleView(segmentView, at: 0)
+    }
+    
+    func setUpGesture() {// 解决uiscrollview和系统的返手势冲突
+        if let scrollView = self.pageViewController.view.subviews.first as? UIScrollView , let gesture = self.navigationController?.interactivePopGestureRecognizer{
+            scrollView.panGestureRecognizer.require(toFail: gesture)
+        }
+    }
+    
     // MARK: -- UIPageViewControllerDataSource
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
      
@@ -161,6 +176,9 @@ class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegat
         }
         let selectedVC = self.subViewControllers[index]
         self.pageViewController.setViewControllers([selectedVC],direction: direction,animated: false,completion: nil)
-        
+    }
+    
+    deinit {
+        print("PlayListPlazaOverallController 销毁了")
     }
 }
