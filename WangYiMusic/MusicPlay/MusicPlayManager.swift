@@ -103,10 +103,9 @@ class MusicPlayManager : NSObject{
     
     var loopType : PlayMusicControlLoopType = .cycle
     private func nextMusic() -> Music?{
-        return switchMusic { (pm, list) -> Music? in
-            guard let index = list.firstIndex(where: {$0 == pm}) else { return nil }
-            if pm == list.last,index == list.count-1{
-                return list[0]
+        return switchMusic { (index, list) -> Music? in
+            if index == list.count-1{
+                return list.first
             }else{
                 return list[index+1]
             }
@@ -114,9 +113,8 @@ class MusicPlayManager : NSObject{
     }
     
     private func lastMusic() -> Music?{
-        return switchMusic { (pm, list) -> Music? in
-            guard let index = list.firstIndex(where: {$0 == pm}) else { return nil }
-            if pm == list.first,index == 0{
+        return switchMusic { (index, list) -> Music? in
+            if index == 0{
                 return list.last
             }else{
                 return list[index-1]
@@ -124,7 +122,7 @@ class MusicPlayManager : NSObject{
         }
     }
     
-    func switchMusic(cycle:(Music,[Music])->Music?) -> Music? {
+    func switchMusic(cycle:(Int,[Music])->Music?) -> Music? {
         guard let list = currentPlayingMusics, list.count > 0 else { return nil }
         var result : Music?
         switch loopType {
@@ -134,7 +132,8 @@ class MusicPlayManager : NSObject{
             result = list[Int(arc4random_uniform(UInt32(list.count)))]
         case .cycle:
             guard let cMusic = currentPlayingMusic else { return nil }
-            result = cycle(cMusic,list)
+            guard let index = list.firstIndex(where: {$0 == cMusic}) else { return nil }
+            result = cycle(index,list)
         }
         return result
     }
@@ -155,6 +154,7 @@ class MusicPlayManager : NSObject{
             }
         }
     }
+    
     @discardableResult
     func archiveTodisk() -> Bool{
         guard let currentPlayingMusic = MusicPlayManager.shared.currentPlayingMusic else { return false}

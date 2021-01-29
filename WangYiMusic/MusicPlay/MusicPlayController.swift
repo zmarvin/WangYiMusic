@@ -148,6 +148,10 @@ class MusicPlayController: UIViewController {
                 let selectMusic = playingMusics[index]
                 MusicPlayManager.shared.currentPlayingMusic = selectMusic
             }
+            MusicPlayingTableView.shared.cellModels = playingMusics
+            MusicPlayingTableView.shared.selectItemCallBack = { music in
+                MusicPlayManager.shared.currentPlayingMusic = music
+            }
         }
         
         MusicPlayManager.shared.rx.observe(\.currentPlayingMusic).distinctUntilChanged().subscribe(onNext: { [weak self] m in
@@ -251,11 +255,7 @@ class MusicPlayController: UIViewController {
     }
 
     @objc func menuBtnClick() {
-        MusicPlayingTableView.shared.cellModels = MusicPlayManager.shared.currentPlayingMusics
         MusicPlayingTableView.shared.show()
-        MusicPlayingTableView.shared.selectItemCallBack = {music in
-            MusicPlayManager.shared.currentPlayingMusic = music
-        }
     }
     
     @objc func sliderValue(slide:UISlider){

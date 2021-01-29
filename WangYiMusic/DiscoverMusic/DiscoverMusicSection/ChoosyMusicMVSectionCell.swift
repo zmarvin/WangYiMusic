@@ -14,7 +14,7 @@ class ChoosyMusicMVSectionCell: UICollectionViewCell {
     var player : IJKMediaPlayback?
     var mvUrl : String = ""{
         didSet{
-            return
+            
             guard self.player == nil else { return }
             guard let url = URL(string: mvUrl) else { return }
             self.createPlayer(with: url)

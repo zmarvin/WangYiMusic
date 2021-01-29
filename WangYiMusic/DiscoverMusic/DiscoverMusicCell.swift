@@ -197,30 +197,24 @@ class DiscoverMusicCell: UITableViewCell,UICollectionViewDataSource,UICollection
             case .recommendMusic:fallthrough
             case .djprogramCollection:fallthrough
             case .new_song:
-                self.contentView.addSubview(self.collectionView)
                 innerView = self.collectionView
             case .recommendMV:
-                self.contentView.addSubview(self.mVSectionView)
                 innerView = self.mVSectionView
             case .recommendDjprogram:
-                self.contentView.addSubview(self.djprogramSectionView)
                 innerView = self.djprogramSectionView
             case .calendar:
-                self.contentView.addSubview(self.calendarTableVIew)
                 innerView = self.calendarTableVIew
             case .rankingList:
-                self.contentView.addSubview(self.rankingListSectionView)
                 innerView = self.calendarTableVIew
             case .personalTailor:
-                self.contentView.addSubview(self.personalTailorSectionView)
                 innerView = self.personalTailorSectionView
             case .newDishAlbum:
-                self.contentView.addSubview(self.newDishAlbumSectionView)
                 innerView = self.newDishAlbumSectionView
             case .yuncunKTV:
-                self.contentView.addSubview(self.yuncunKTVCollectionView)
                 innerView = self.yuncunKTVCollectionView
             }
+            guard let innerView = self.innerView else { return }
+            self.contentView.addSubview(innerView)
         }
     }
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

@@ -170,74 +170,19 @@ class MusicPlayTransitionManage: NSObject ,UIViewControllerTransitioningDelegate
         return MusicPlayControllerPresentedAnimatedTransitioning()
     }
     
-    // 截图动画
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return MusicPlayControllerDismissAnimatedTransitioning()
     }
     
-    /* view动画
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        
-        if let vc = dismissed as? MusicPlayController,let currentCell = vc.discCollectionView.currentCell {
-            guard let keyWindow = UIApplication.shared.keyWindow else {return nil}
-            let shrinkControlView = MusicPlayShrinkControllPannelView.shared
-            
-            let tempDiscImageView = currentCell.discImageView
-            let discBigWindowFrame = currentCell.convert(tempDiscImageView.frame, to: keyWindow)
-            tempDiscImageView.frame = discBigWindowFrame
-            tempDiscImageView.removeFromSuperview()
-            keyWindow.addSubview(tempDiscImageView)
-            tempDiscImageView.snp.removeConstraints()
-            vc.circularTransparenceLayer.isHidden = true
-            vc.discCollectionView.isHidden = true
-            vc.needleImageView.isHidden = true
-            let discSmallWindowframe = shrinkControlView.convert(shrinkControlView.discImageView.frame, to: keyWindow)
-            
-            let maskView = UIView()
-            maskView.frame = vc.view.bounds
-            maskView.backgroundColor = .white
-            maskView.alpha = 0
-            vc.view.addSubview(maskView)
-            
-            currentCell.resumeAnimation()
-            currentCell.picView.layer.removeAllAnimations()
-            shrinkControlView.isHidden = true
-            UIView.animate(withDuration: 1, animations: {
-                tempDiscImageView.frame = discSmallWindowframe
-                maskView.alpha = 1
-                tempDiscImageView.snp.makeConstraints { (make) in
-                    make.left.equalToSuperview().offset(discSmallWindowframe.minX)
-                    make.top.equalToSuperview().offset(discSmallWindowframe.minY)
-                    make.width.height.equalTo(discSmallWindowframe.size.width)
-                }
-                currentCell.picView.snp.makeConstraints { (make) in
-                    make.edges.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
-                }
-                currentCell.picView.layer.cornerRadius = shrinkControlView.picView.layer.cornerRadius
-                keyWindow.layoutIfNeeded()
-            }, completion: { isCompletion in
-//                let discShrinkControlframe = keyWindow.convert(discSmallWindowframe, to: shrinkControlView)
-//                tempDiscImageView.frame = discShrinkControlframe
-                tempDiscImageView.removeFromSuperview()
-                shrinkControlView.isHidden = false
-                print("forDismissed动画完成")
-//                shrinkControlView.addSubview(tempDiscImageView)
-            })
-            
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1) {
-                tempDiscImageView.removeFromSuperview()
-            }
-        }
-        return DismissAnimatedTransitioning()
-    }
-    */
     func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
         return nil
     }
+    
     func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
         let tran = dismissalInteraction.isInteraction ? dismissalInteraction : nil
         return tran
     }
+    
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         return nil
     }
