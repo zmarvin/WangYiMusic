@@ -22,7 +22,6 @@ class MusicPlayShrinkControllPannelView: UIButton, UINavigationControllerDelegat
     let musicNameLabel = UILabel()
     let playOrPauseBtn = MusicPlayShrinkControlPannelProgressBtn()
     let listBtn = UIButton()
-    var isHideTabBar:Bool = true
     let discAnimationKey = NSStringFromClass(MusicPlayShrinkControllPannelView.self)
     var animationDidStart : (()->Void)?
     var isShow = false
@@ -133,6 +132,8 @@ class MusicPlayShrinkControllPannelView: UIButton, UINavigationControllerDelegat
                 self.pauseAnimation()
             }
         }).disposed(by: disposeBag)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(popGestureCancelled), name: NSNotification.Name.WYScreenEdgePopGestureCancelled, object: nil)
     }
     
     func reSetUpAnimation(fromValue:CGFloat, animationDidStart: ( ()->Void )? ) {
@@ -211,30 +212,34 @@ class MusicPlayShrinkControllPannelView: UIButton, UINavigationControllerDelegat
     }
 
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool){
-        guard let nav = navigationController as? EMBaseNavigationController else { return }
-        if nav.isHideTabBar {
-            self.isHideTabBar = true
-            UIView.animate(withDuration: 0.3, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
-                self.refrashFrame()
-            }, completion: nil)
-        }else{
-            self.isHideTabBar = false
-            UIView.animate(withDuration: 0.3, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
-                self.refrashFrame()
-            }, completion: nil)
-            if !self.isHideTabBar && self.isShow {
-                // 当TAB_BAR和shrinkConrollPannel同时显示时，修改viewcontroller.view.frame.height - selfHeightNotIncludeSafeBottom
-                let topHeight = WY_NAV_BAR_HEIGHT + WY_STATUS_BAR_HEIGHT
-                let bottomHeight = WY_TAB_BAR_HEIGHT + WY_SAFE_BOTTOM_MARGIN + self.selfHeightNotIncludeSafeBottom
-                let height = WY_SCREEN_HEIGHT - topHeight - bottomHeight
-                viewController.viewDidLayoutSubviews_Inject{
-                    viewController.view.frame.size.height = height
-                }
-            }
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.refrashFrame()
+        }, completion: { isCom in
+            self.adjustControllerViewFrameHeight(with: viewController, with: navigationController)
+        })
+    }
+    
+    @objc func popGestureCancelled(noti:Notification){
+        UIView.animate(withDuration: 0.3) {
+            self.refrashFrame()
         }
     }
     
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+    }
+    
+    func adjustControllerViewFrameHeight(with viewController:UIViewController,with navigationController: UINavigationController) {
+        guard let nav = navigationController as? EMBaseNavigationController else { return }
+        if !nav.isHideTabBar && self.isShow && !nav.isNavigationBarHidden{
+            // 当TAB_BAR和shrinkConrollPannel同时显示时，修改viewcontroller.view.frame.height - selfHeightNotIncludeSafeBottom
+            let topHeight = WY_NAV_BAR_HEIGHT + WY_STATUS_BAR_HEIGHT
+            let bottomHeight = WY_TAB_BAR_HEIGHT + WY_SAFE_BOTTOM_MARGIN + self.selfHeightNotIncludeSafeBottom
+            let height = WY_SCREEN_HEIGHT - topHeight - bottomHeight
+            viewController.viewDidLayoutSubviews_Inject{
+                viewController.view.frame.size.height = height
+            }
+        }
     }
     
     func navController() -> UINavigationController? {
@@ -256,11 +261,13 @@ class MusicPlayShrinkControllPannelView: UIButton, UINavigationControllerDelegat
     }
 
     func refrashFrame() {
+        guard let nav = self.navController() as? EMBaseNavigationController else { return }
+        let isHideTabBar = nav.isHideTabBar
         var selfHeight : CGFloat = selfHeightNotIncludeSafeBottom
-        if WY_IS_IPHONEX && self.isHideTabBar{
+        if WY_IS_IPHONEX && isHideTabBar{
             selfHeight = selfHeightNotIncludeSafeBottom + WY_SAFE_BOTTOM_MARGIN
         }
-        if self.isHideTabBar {
+        if isHideTabBar {
             self.frame = CGRect(x: 0, y: WY_SCREEN_HEIGHT - selfHeight, width: WY_SCREEN_WIDTH, height: selfHeight)
         }else{
             let y = WY_SCREEN_HEIGHT - selfHeight - WY_TAB_BAR_HEIGHT - WY_SAFE_BOTTOM_MARGIN

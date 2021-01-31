@@ -18,8 +18,9 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
     let tableHeaderView = PlayListControllerHeaderView()
     let sectionHeaderView = PlayListControllerSectionHeaderView()
     let tableView = UITableView(frame: .zero, style: UITableView.Style.plain)
-    var imageMostColor = UIColor.white
-    
+    var headerBackgroundImage : UIImage?
+    let reuseId = "PlayListController"
+    let backStretchImageView = UIImageView()
     init(musicId:Int) {
         self.musicId = musicId
         super.init(nibName: nil, bundle: nil)
@@ -43,22 +44,58 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
     func setUpView() {
         self.tableView.dataSource = self
         self.tableView.delegate = self
-        self.tableView.register(PlayListCustomCell.self, forCellReuseIdentifier: "PlayListController")
+        self.tableView.register(PlayListCustomCell.self, forCellReuseIdentifier: reuseId)
         self.tableView.separatorStyle = .none
-        self.tableView.tableHeaderView = tableHeaderView
         self.tableView.sectionHeaderHeight = 50
         self.tableView.rowHeight = 60
         self.sectionHeaderView.frame = CGRect(x: 0, y: 0, width: WY_SCREEN_WIDTH, height: 50)
-        self.tableHeaderView.frame = CGRect(x: 0, y: 0, width: WY_SCREEN_WIDTH, height: 280)
-        self.view.addSubview(tableView)
-        tableView.snp.makeConstraints { (make) in
+        let tableHeaderViewH : CGFloat = 280
+//        self.tableView.contentInset = UIEdgeInsets(top: tableHeaderViewH, left: 0, bottom: 0, right: 0)
+        self.tableHeaderView.frame = CGRect(x: 0, y: 0, width: WY_SCREEN_WIDTH, height: tableHeaderViewH)
+        self.view.addSubview(self.tableView)
+//        tableView.addSubview(tableHeaderView)
+        self.tableView.tableHeaderView = tableHeaderView
+        self.tableView.snp.makeConstraints { (make) in
             make.top.left.bottom.right.equalToSuperview()
         }
+        
+        self.tableView.insertSubview(backStretchImageView, at: 0)
+        backStretchImageView.frame = CGRect(x: 0, y: 0, width: WY_SCREEN_WIDTH, height: 10)
+        
         self.tableHeaderView.imageView.rx.observe(\.image).subscribe(onNext:{ [unowned self] image in
-            if let ima = image {
-                self.imageMostColor = UIColor.mostColor(with: ima)
-                self.tableView.backgroundColor = self.imageMostColor
-                self.navigationController?.navigationBar.setBackgroundImage(self.imageMostColor.image(), for: UIBarMetrics.default)
+            if let image = image {
+                let imageMostColor = UIColor.mostColor(with: image)
+                self.tableView.backgroundColor = imageMostColor
+                
+                let upExpectHeight = WY_NAV_BAR_HEIGHT + WY_STATUS_BAR_HEIGHT
+                let downExpectHeight = self.tableHeaderView.imageViewHeight
+                let expectHeight = upExpectHeight + downExpectHeight
+                let expectWidth = WY_SCREEN_WIDTH
+                // 缩小尺寸
+                let shrinkWidth : CGFloat = 3
+                let shrinkHeight = shrinkWidth * expectHeight/expectWidth
+                let shrinkImage = image.reSize(newSize: CGSize(width: shrinkWidth, height: shrinkHeight), scale: 1)
+                let upShrinkHeight = upExpectHeight/expectHeight * shrinkHeight
+                let downShrinkHeight = shrinkHeight - upShrinkHeight
+                let upShrinkImage = shrinkImage?.cut(rect: CGRect(x: 0, y: 0, width: shrinkWidth, height: upShrinkHeight))
+                let downShrinkImage = shrinkImage?.cut(rect: CGRect(x: 0, y: upShrinkHeight, width: shrinkWidth, height: downShrinkHeight))
+                // 放大到期望的尺寸
+                let upExpectImageT = upShrinkImage?.reSize(newSize: CGSize(width: expectWidth, height: upExpectHeight), scale: 1)
+                let downExpectImageT = downShrinkImage?.reSize(newSize: CGSize(width: expectWidth, height: downExpectHeight), scale: 1)
+                let blurNumber : CGFloat = 99
+                let upExpectImage = UIImage.boxBlurImage( upExpectImageT, withBlurNumber: blurNumber).resizableImage(withCapInsets: UIEdgeInsets.zero, resizingMode: UIImage.ResizingMode.stretch)
+                let downExpectImage = UIImage.boxBlurImage( downExpectImageT, withBlurNumber: blurNumber)
+                
+                self.navigationController?.navigationBar.setBackgroundImage(upExpectImage, for: UIBarMetrics.default)
+                self.tableHeaderView.backgroundImageView.image = downExpectImage
+                
+                UIGraphicsBeginImageContext(CGSize(width: expectWidth, height: expectHeight))
+                upExpectImage.draw(in: CGRect(origin: .zero, size: CGSize(width: expectWidth, height: upExpectHeight)))
+                downExpectImage.draw(in: CGRect(x: 0, y: upExpectHeight, width: expectWidth, height: downExpectHeight))
+                let jointImage = UIGraphicsGetImageFromCurrentImageContext()
+                UIGraphicsEndImageContext()
+                self.headerBackgroundImage = jointImage
+                self.backStretchImageView.image = downExpectImage.cut(rect: CGRect(x: 0, y: 0, width: expectWidth, height: 10))
             }
         }).disposed(by: disposeBag)
     }
@@ -86,7 +123,7 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.setBackgroundImage(self.imageMostColor.image(), for: UIBarMetrics.default)
+//        self.navigationController?.navigationBar.setBackgroundImage(self.imageMostColor.image(), for: UIBarMetrics.default)
         self.navigationController?.navigationBar.titleTextAttributes = [
             NSAttributedString.Key.foregroundColor : UIColor.white,
             NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 20)
@@ -113,7 +150,7 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell  = tableView.dequeueReusableCell(withIdentifier: "PlayListController", for: indexPath) as! PlayListCustomCell
+        let cell  = tableView.dequeueReusableCell(withIdentifier: reuseId, for: indexPath) as! PlayListCustomCell
         guard let models = self.dataModels else { return cell }
         let model = models[indexPath.row]
         cell.indexLabel.text = "\(indexPath.row+1)"
@@ -130,32 +167,65 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
         tableView.deselectRow(at: indexPath, animated: true)
         guard let models = self.dataModels else { return }
         let model = models[indexPath.row]
-//        if let id = model.id {
-//            self.processor.pipeline(type: .some(PlayListDetailSignal.selectedMP3(id:id)))
-//            EMRouter.push(EMRouter.oldmusicPlayController(.normal(id: model,list: models)))
-//        }
+
         let vc = MusicPlayController()
         MusicPlayManager.shared.currentPlayingMusic = model
         MusicPlayManager.shared.currentPlayingMusics = models
         self.present(vc, animated: true, completion: nil)
     }
     
+    lazy var beltMinOffset = self.tableHeaderView.beltBackgroundView.frame.origin.y
+    lazy var beltMaxOffset = self.tableHeaderView.beltBackgroundView.frame.midY
+    lazy var beltHeight = self.tableHeaderView.beltBackgroundView.bounds.height
+    lazy var beltWidth = self.tableHeaderView.beltBackgroundView.bounds.width
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        let offsetY = scrollView.contentOffset.y
-//        let delta = offsetY - self.tableHeaderView.beltBackgroundShadowView.frame.minY
+        let offsetY = scrollView.contentOffset.y
+        
+        if offsetY < beltMinOffset {
+            self.tableHeaderView.beltBackgroundView.alpha = 1
+            self.tableHeaderView.beltBackgroundView.transform = CGAffineTransform(scaleX: 1, y: 1)
+        }else if beltMinOffset <= offsetY && offsetY <= beltMaxOffset {
+            let deltaH = offsetY - beltMinOffset
+//            let deltaW = deltaH/beltHeight * beltWidth
+            let transformHeight = beltHeight - deltaH * 2
+            let ratio = transformHeight/beltHeight
+//            let transformWidth = ratio * width
+            let transformAplha = ratio - 0.6 >= 0 ? ratio - 0.6 : 0
+            self.tableHeaderView.beltBackgroundView.alpha = transformAplha
+            self.tableHeaderView.beltBackgroundView.transform = CGAffineTransform(scaleX: ratio, y: ratio)
+        }else{// offsetY > beltMaxOffset
+            self.tableHeaderView.beltBackgroundView.alpha = 0
+            self.tableHeaderView.beltBackgroundView.transform = CGAffineTransform(scaleX: 0, y: 0)
+        }
 
-//        if 0 <= delta && delta <= 20 {
-//            let ratio = delta/20
-//            self.tableHeaderView.beltBackgroundShadowView.alpha = 1 - ratio
-//            self.tableHeaderView.beltBackgroundShadowView.transform = CGAffineTransform(scaleX: ratio, y: ratio)
-//        }else if 20 < delta {
-//            self.tableHeaderView.beltBackgroundShadowView.alpha = 0
-//            self.tableHeaderView.beltBackgroundShadowView.transform = CGAffineTransform(scaleX: 0, y: 0)
-//        }else {
-//            self.tableHeaderView.beltBackgroundShadowView.alpha = 1
-//            self.tableHeaderView.beltBackgroundShadowView.transform = CGAffineTransform(scaleX: 1, y: 1)
-//        }
+        if offsetY > 0 { // 上拉
+            guard let headerBackgroundImage = self.headerBackgroundImage else { return }
+            guard offsetY < headerBackgroundImage.size.height else {return}
+            let cutH : CGFloat = WY_NAV_BAR_HEIGHT + WY_STATUS_BAR_HEIGHT
+            let cutY : CGFloat = offsetY
+            let cutX : CGFloat = 0
+            let cutW : CGFloat = WY_SCREEN_WIDTH
+            let navBackgroundImage = headerBackgroundImage.cut(rect: CGRect(x: cutX, y: cutY, width: cutW, height: cutH))?.resizableImage(withCapInsets: UIEdgeInsets.zero, resizingMode: UIImage.ResizingMode.stretch)
+            self.navigationController?.navigationBar.setBackgroundImage(navBackgroundImage, for: UIBarMetrics.default)
+        }else{ // 下拉
+            let increment = abs(offsetY)
+            
+//            let scaleHeight = headerImageViewFrame.height + increment
+//            let scale = scaleHeight/headerImageViewFrame.height
+//            let scaleWidth = headerImageViewFrame.width*scale
+//
+//            let x = -(scaleWidth - headerImageViewFrame.width) * 0.5
+//            let y = -(scaleHeight - headerImageViewFrame.height)
+//            self.tableHeaderView.backgroundImageView.frame = CGRect(x: x, y: y, width: scaleWidth, height: scaleHeight)
+//            print("frame:",self.tableHeaderView.backgroundImageView.frame)
+            
+            backStretchImageView.frame = CGRect(x: 0, y: -increment, width: WY_SCREEN_WIDTH, height: increment)
+            backStretchImageView.backgroundColor = .black
+        }
+        
     }
+    lazy var headerImageViewFrame = self.tableHeaderView.backgroundImageView.frame
     deinit {
         print("PlayListController销毁了")
     }

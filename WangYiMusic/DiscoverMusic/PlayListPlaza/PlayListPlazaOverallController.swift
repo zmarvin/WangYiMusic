@@ -82,7 +82,7 @@ class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegat
     
     func setUpView() {
         self.navigationItem.title = "歌单广场"
-        
+        self.edgesForExtendedLayout = [.left,.right,.bottom]
         let items: [String] = inPlazaCategoryModels.map{$0.name}
         let config = GXSegmentTitleView.Configuration()
         config.positionStyle = .bottom

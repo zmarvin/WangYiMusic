@@ -205,7 +205,7 @@ class DiscoverMusicCell: UITableViewCell,UICollectionViewDataSource,UICollection
             case .calendar:
                 innerView = self.calendarTableVIew
             case .rankingList:
-                innerView = self.calendarTableVIew
+                innerView = self.rankingListSectionView
             case .personalTailor:
                 innerView = self.personalTailorSectionView
             case .newDishAlbum:

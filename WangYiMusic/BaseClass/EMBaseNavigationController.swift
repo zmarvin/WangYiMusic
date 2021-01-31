@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RxSwift
 
 extension UIViewController{
     
@@ -36,6 +37,9 @@ extension UIViewController{
 class EMBaseNavigationController: UINavigationController, UIGestureRecognizerDelegate {
     
     var hidesBottomBarWhenPushedViewController = [UIViewController]()
+    // 临时保存pop出来的,属性hidesBottomBarWhenPushed为true控制器,，待手势ended或者cancel后再置为nil
+    var popedViewController_hidesBottomBarWhenPushedIsTrue : UIViewController?
+    
     var isHideTabBar : Bool {
         guard self.hidesBottomBarWhenPushedViewController.count > 0 else { return false }
         guard let hidesBottomBarVC = self.hidesBottomBarWhenPushedViewController.first else { return false }
@@ -48,16 +52,31 @@ class EMBaseNavigationController: UINavigationController, UIGestureRecognizerDel
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
         self.interactivePopGestureRecognizer?.delegate = self
+        NotificationCenter.default.addObserver(self, selector: #selector(popGestureCancelledNotification), name: NSNotification.Name.WYScreenEdgePopGestureCancelled, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(popGestureEndedNotification), name: NSNotification.Name.WYScreenEdgePopGestureEnded, object: nil)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    @objc func popGestureCancelledNotification(noti:Notification){
+        guard let viewController = noti.object as? UIViewController else { return }
+        if popedViewController_hidesBottomBarWhenPushedIsTrue === viewController {
+            self.hidesBottomBarWhenPushedViewController.append(viewController)
+        }
+        popedViewController_hidesBottomBarWhenPushedIsTrue = nil
+    }
+    
+    @objc func popGestureEndedNotification(noti:Notification){
+        popedViewController_hidesBottomBarWhenPushedIsTrue = nil
+    }
+    
     // MARK: UIGestureRecognizerDelegate
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return self.children.count > 1
     }
-    
+
     override func pushViewController(_ viewController: UIViewController, animated: Bool) {
         
         if viewController.hidesBottomBarWhenPushed {
@@ -76,6 +95,7 @@ class EMBaseNavigationController: UINavigationController, UIGestureRecognizerDel
         if hidesBottomBarWhenPushedViewController.contains(vc) {
             hidesBottomBarWhenPushedViewController.removeAll { $0 === vc }
             showTabbar()
+            popedViewController_hidesBottomBarWhenPushedIsTrue = vc
         }
         return vc
     }
@@ -93,7 +113,8 @@ class EMBaseNavigationController: UINavigationController, UIGestureRecognizerDel
     func showTabbar() {
         guard let tabbar = self.tabBarController?.tabBar else{return}
         var tempFrame = tabbar.frame
-        tempFrame.origin.y = tempFrame.origin.y - WY_TAB_BAR_HEIGHT - WY_SAFE_BOTTOM_MARGIN
+        tempFrame.origin.y = WY_SCREEN_HEIGHT - WY_TAB_BAR_HEIGHT - WY_SAFE_BOTTOM_MARGIN
+//        tempFrame.origin.y = tempFrame.origin.y - WY_TAB_BAR_HEIGHT - WY_SAFE_BOTTOM_MARGIN
         UIView.animate(withDuration: 0.3) {
             tabbar.frame = tempFrame
         }
@@ -102,7 +123,8 @@ class EMBaseNavigationController: UINavigationController, UIGestureRecognizerDel
     func hideTabbar() {
         guard let tabbar = self.tabBarController?.tabBar else{return}
         var tempFrame = tabbar.frame
-        tempFrame.origin.y = tempFrame.origin.y + WY_TAB_BAR_HEIGHT + WY_SAFE_BOTTOM_MARGIN
+        tempFrame.origin.y = WY_SCREEN_HEIGHT
+//        tempFrame.origin.y = tempFrame.origin.y + WY_TAB_BAR_HEIGHT + WY_SAFE_BOTTOM_MARGIN
         UIView.animate(withDuration: 0.3) {
             tabbar.frame = tempFrame
         }

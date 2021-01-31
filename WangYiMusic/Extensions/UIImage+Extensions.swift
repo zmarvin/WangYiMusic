@@ -7,20 +7,156 @@
 //
 
 import Foundation
+import Accelerate
 
 extension UIImage {
+    
+    func cut(rect:CGRect) -> UIImage? {
+        guard let image = self.cgImage?.cropping(to:rect) else { return nil }
+        return UIImage(cgImage: image)
+    }
+    
+    func reSize(newSize:CGSize,scale:Int) -> UIImage? {
+        if __CGSizeEqualToSize(self.size, newSize) {
+            return self
+        }
+        let finalScale = (0 == scale) ? Int(UIScreen.main.scale) : scale
+        UIGraphicsBeginImageContextWithOptions(newSize, false, CGFloat(finalScale))
+        self.draw(in: CGRect(origin: .zero, size: newSize))
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return scaledImage
+    }
     
     func gaussianBlur() -> UIImage? {
         guard let ciImage = CIImage(image: self) else { return nil }
         let context = CIContext(options: nil)
         let parameters : [String : Any] = [
-            kCIInputRadiusKey: 5,
+            kCIInputRadiusKey: 10,
             kCIInputImageKey: ciImage
         ]
         guard let lter = CIFilter(name: "CIGaussianBlur",parameters: parameters) else { return nil}
         guard let outputImage = lter.outputImage else { return nil }
-        guard let cgImage = context.createCGImage(outputImage, from: CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height)) else { return nil }
+        guard let cgImage = context.createCGImage(outputImage, from: ciImage.extent) else { return nil }
         return UIImage(cgImage: cgImage)
+    }
+    // 有变色问题
+    class func swift_boxBlurImage(_ image: UIImage?, withBlurNumber blur: CGFloat) -> UIImage? {
+        guard let image = image else { return nil }
+
+        var boxSize = 0
+        if blur < 1 || blur > 100 {
+            boxSize = 25
+        }
+        boxSize = boxSize - (boxSize % 2) + 1
+
+        guard let img = image.cgImage else { return nil }
+        
+        var inBuffer = vImage_Buffer()
+        var outBuffer = vImage_Buffer()
+        var rgbOutBuffer = vImage_Buffer()
+        
+        var error: vImage_Error!
+        var pixelBuffer: UnsafeMutableRawPointer
+        var convertBuffer: UnsafeMutableRawPointer
+        
+        // 从CGImage中获取数据
+        guard let inProvider = img.dataProvider else { return nil }
+        let inBitmapData = inProvider.data
+        
+        convertBuffer = malloc(img.bytesPerRow * img.height)
+        rgbOutBuffer.width = UInt(img.width)
+        rgbOutBuffer.height = UInt(img.height)
+        rgbOutBuffer.rowBytes = img.bytesPerRow
+        rgbOutBuffer.data = convertBuffer
+        
+        // 设置从CGImage获取对象的属性
+        inBuffer.width = UInt(img.width)
+        inBuffer.height = UInt(img.height)
+        inBuffer.rowBytes = img.bytesPerRow
+        inBuffer.data = UnsafeMutableRawPointer(mutating: CFDataGetBytePtr(inBitmapData))
+        
+        pixelBuffer = malloc(img.bytesPerRow * img.height)
+        
+        outBuffer.data = pixelBuffer
+        outBuffer.width = UInt(img.width)
+        outBuffer.height = UInt(img.height)
+        outBuffer.rowBytes = img.bytesPerRow
+        
+        let rgbConvertBuffer = malloc(img.bytesPerRow * img.height)
+        var outRGBBuffer = vImage_Buffer()
+        outRGBBuffer.width = UInt(img.width)
+        outRGBBuffer.height = UInt(img.height)
+        outRGBBuffer.rowBytes = img.bytesPerRow
+        outRGBBuffer.data = rgbConvertBuffer
+        
+        error = vImageBoxConvolve_ARGB8888(&inBuffer, &outBuffer, nil, 0, 0, UInt32(boxSize), UInt32(boxSize), nil, UInt32(kvImageEdgeExtend))
+        if error != nil && error != 0 {
+            NSLog("error from convolution %ld", error)
+        }
+
+        let mask : [UInt8] = [2, 1, 0, 3]
+        vImagePermuteChannels_ARGB8888(&outBuffer, &rgbOutBuffer, mask, vImage_Flags(kvImageNoFlags))
+        
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        guard let ctx = CGContext(data: outBuffer.data, width: Int(outBuffer.width), height: Int(outBuffer.height), bitsPerComponent: 8, bytesPerRow: outBuffer.rowBytes, space: colorSpace, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return nil }
+        
+        let imageRef = ctx.makeImage()!
+        let returnImage = UIImage(cgImage: imageRef)
+        
+        free(pixelBuffer)
+        free(convertBuffer)
+        free(rgbConvertBuffer)
+        
+        return returnImage
+    }
+    
+    func aspectFillScaleToSize(newSize:CGSize,scale:Int) -> UIImage? {
+        if __CGSizeEqualToSize(self.size, newSize) {
+            return self
+        }
+        
+        var scaledImageRect = CGRect.zero
+        
+        let aspectWidth = newSize.width / self.size.width
+        let aspectHeight = newSize.height / self.size.height
+        let aspectRatio = max(aspectWidth, aspectHeight)
+        
+        scaledImageRect.size.width = self.size.width * aspectRatio
+        scaledImageRect.size.height = self.size.height * aspectRatio
+        scaledImageRect.origin.x = (newSize.width - scaledImageRect.size.width) / 2.0
+        scaledImageRect.origin.y = (newSize.height - scaledImageRect.size.height) / 2.0
+        
+        let finalScale = (0 == scale) ? Int(UIScreen.main.scale) : scale
+        UIGraphicsBeginImageContextWithOptions(newSize, false, CGFloat(finalScale))
+        self.draw(in: scaledImageRect)
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return scaledImage
+    }
+    
+    func aspectFitScaleToSize(newSize:CGSize,scale:Int) -> UIImage? {
+        if __CGSizeEqualToSize(self.size, newSize) {
+            return self
+        }
+        
+        var scaledImageRect = CGRect.zero
+        
+        let aspectWidth = newSize.width / self.size.width
+        let aspectHeight = newSize.height / self.size.height
+        let aspectRatio = min(aspectWidth, aspectHeight)
+        
+        scaledImageRect.size.width = self.size.width * aspectRatio
+        scaledImageRect.size.height = self.size.height * aspectRatio
+        scaledImageRect.origin.x = (newSize.width - scaledImageRect.size.width) / 2.0
+        scaledImageRect.origin.y = (newSize.height - scaledImageRect.size.height) / 2.0
+        
+        let finalScale = (0 == scale) ? Int(UIScreen.main.scale) : scale
+        UIGraphicsBeginImageContextWithOptions(newSize, false, CGFloat(finalScale))
+        self.draw(in: scaledImageRect)
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return scaledImage
     }
     
     // 耗时太久，暂用oc版本
@@ -81,54 +217,6 @@ extension UIImage {
             }
         }
        return UIColor.init(red: (maxColor![0]/255), green: (maxColor![1]/255), blue: (maxColor![2]/255), alpha: (maxColor![3]/255))
-    }
-    
-    func aspectFillScaleToSize(newSize:CGSize,scale:Int) -> UIImage? {
-        if __CGSizeEqualToSize(self.size, newSize) {
-            return self
-        }
-        
-        var scaledImageRect = CGRect.zero
-        
-        let aspectWidth = newSize.width / self.size.width
-        let aspectHeight = newSize.height / self.size.height
-        let aspectRatio = max(aspectWidth, aspectHeight)
-        
-        scaledImageRect.size.width = self.size.width * aspectRatio
-        scaledImageRect.size.height = self.size.height * aspectRatio
-        scaledImageRect.origin.x = (newSize.width - scaledImageRect.size.width) / 2.0
-        scaledImageRect.origin.y = (newSize.height - scaledImageRect.size.height) / 2.0
-        
-        let finalScale = (0 == scale) ? Int(UIScreen.main.scale) : scale
-        UIGraphicsBeginImageContextWithOptions(newSize, false, CGFloat(finalScale))
-        self.draw(in: scaledImageRect)
-        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return scaledImage
-    }
-    
-    func aspectFitScaleToSize(newSize:CGSize,scale:Int) -> UIImage? {
-        if __CGSizeEqualToSize(self.size, newSize) {
-            return self
-        }
-        
-        var scaledImageRect = CGRect.zero
-        
-        let aspectWidth = newSize.width / self.size.width
-        let aspectHeight = newSize.height / self.size.height
-        let aspectRatio = min(aspectWidth, aspectHeight)
-        
-        scaledImageRect.size.width = self.size.width * aspectRatio
-        scaledImageRect.size.height = self.size.height * aspectRatio
-        scaledImageRect.origin.x = (newSize.width - scaledImageRect.size.width) / 2.0
-        scaledImageRect.origin.y = (newSize.height - scaledImageRect.size.height) / 2.0
-        
-        let finalScale = (0 == scale) ? Int(UIScreen.main.scale) : scale
-        UIGraphicsBeginImageContextWithOptions(newSize, false, CGFloat(finalScale))
-        self.draw(in: scaledImageRect)
-        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return scaledImage
     }
 }
 

@@ -14,7 +14,7 @@
 		04093C6925BF06A700AE90CD /* RxDiscoverMusicAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093C2125BF06A700AE90CD /* RxDiscoverMusicAPI.swift */; };
 		04093C6A25BF06A700AE90CD /* PlayListControllerSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093C2325BF06A700AE90CD /* PlayListControllerSectionHeaderView.swift */; };
 		04093C6B25BF06A700AE90CD /* PlayListRxAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093C2425BF06A700AE90CD /* PlayListRxAPI.swift */; };
-		04093C6C25BF06A700AE90CD /* PlayListCustomArcView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093C2525BF06A700AE90CD /* PlayListCustomArcView.swift */; };
+		04093C6C25BF06A700AE90CD /* PlayListControllerHeaderBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093C2525BF06A700AE90CD /* PlayListControllerHeaderBackgroundView.swift */; };
 		04093C6D25BF06A700AE90CD /* PlayListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093C2625BF06A700AE90CD /* PlayListController.swift */; };
 		04093C6E25BF06A700AE90CD /* PlayListControllerHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093C2725BF06A700AE90CD /* PlayListControllerHeaderView.swift */; };
 		04093C6F25BF06A700AE90CD /* PlayListCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093C2825BF06A700AE90CD /* PlayListCustomCell.swift */; };
@@ -77,12 +77,10 @@
 		04093CB325BF06E700AE90CD /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093CAC25BF06E700AE90CD /* UIImage+Extensions.swift */; };
 		04093CB425BF06E700AE90CD /* UITabBar+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093CAD25BF06E700AE90CD /* UITabBar+Extensions.swift */; };
 		04093CB525BF06E700AE90CD /* Kingfisher+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093CAF25BF06E700AE90CD /* Kingfisher+Extensions.swift */; };
-		04093CB625BF06E700AE90CD /* UIViewController+Inject.m in Sources */ = {isa = PBXBuildFile; fileRef = 04093CB025BF06E700AE90CD /* UIViewController+Inject.m */; };
 		04093CC725BF06F300AE90CD /* MusicPlayRxAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093CB925BF06F300AE90CD /* MusicPlayRxAPI.swift */; };
 		04093CC825BF06F300AE90CD /* MusicPlayDiscCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093CBA25BF06F300AE90CD /* MusicPlayDiscCollectionView.swift */; };
 		04093CC925BF06F300AE90CD /* MusicPlayProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093CBB25BF06F300AE90CD /* MusicPlayProgressBarView.swift */; };
 		04093CCA25BF06F300AE90CD /* MusicPlayShrinkControlPannelProgressBtn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093CBC25BF06F300AE90CD /* MusicPlayShrinkControlPannelProgressBtn.swift */; };
-		04093CCB25BF06F300AE90CD /* MusicPlayManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093CBD25BF06F300AE90CD /* MusicPlayManager.swift */; };
 		04093CCC25BF06F300AE90CD /* MusicPlayBottomControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093CBE25BF06F300AE90CD /* MusicPlayBottomControlView.swift */; };
 		04093CCE25BF06F300AE90CD /* MusicPlayDiscCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093CC025BF06F300AE90CD /* MusicPlayDiscCollectionViewCell.swift */; };
 		04093CCF25BF06F300AE90CD /* MusicPlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093CC125BF06F300AE90CD /* MusicPlayController.swift */; };
@@ -128,6 +126,12 @@
 		04093DB025BF0D9500AE90CD /* EMTabbarIcon.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 04093DAC25BF0D9500AE90CD /* EMTabbarIcon.bundle */; };
 		04093DC225BF133B00AE90CD /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 04093DC125BF133B00AE90CD /* libc++.tbd */; };
 		0430AF3F25C3A0D300CF76E3 /* MJRefreshGifHeader+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0430AF3E25C3A0D300CF76E3 /* MJRefreshGifHeader+Extensions.swift */; };
+		0430AF6F25C5102A00CF76E3 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0430AF6E25C5102A00CF76E3 /* Array+Extensions.swift */; };
+		0430AF7B25C54A8B00CF76E3 /* UIViewController+DidLayoutInject.m in Sources */ = {isa = PBXBuildFile; fileRef = 0430AF7A25C54A8B00CF76E3 /* UIViewController+DidLayoutInject.m */; };
+		0430AF7F25C54AC900CF76E3 /* UIViewController+PopGestureState.m in Sources */ = {isa = PBXBuildFile; fileRef = 0430AF7E25C54AC900CF76E3 /* UIViewController+PopGestureState.m */; };
+		0430AF8825C54C7E00CF76E3 /* NSObject+Swizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 0430AF8725C54C7E00CF76E3 /* NSObject+Swizzle.m */; };
+		0430AFD525C5B10400CF76E3 /* MusicPlayManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04093CBD25BF06F300AE90CD /* MusicPlayManager.swift */; };
+		0451EC1325C6BFA000BF5E0E /* UIImage+blur.m in Sources */ = {isa = PBXBuildFile; fileRef = 0451EC1125C6BFA000BF5E0E /* UIImage+blur.m */; };
 		0460B78725C28E12005A3703 /* SearchRxAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0460B78625C28E12005A3703 /* SearchRxAPI.swift */; };
 		0460B78B25C29138005A3703 /* MVInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0460B78A25C29138005A3703 /* MVInfoModel.swift */; };
 		72F167432B4E2F5CB4FF89B7 /* Pods_WangYiMusic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64B9B6B9D01B08C207C4C914 /* Pods_WangYiMusic.framework */; };
@@ -143,7 +147,7 @@
 		04093C2125BF06A700AE90CD /* RxDiscoverMusicAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxDiscoverMusicAPI.swift; sourceTree = "<group>"; };
 		04093C2325BF06A700AE90CD /* PlayListControllerSectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayListControllerSectionHeaderView.swift; sourceTree = "<group>"; };
 		04093C2425BF06A700AE90CD /* PlayListRxAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayListRxAPI.swift; sourceTree = "<group>"; };
-		04093C2525BF06A700AE90CD /* PlayListCustomArcView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayListCustomArcView.swift; sourceTree = "<group>"; };
+		04093C2525BF06A700AE90CD /* PlayListControllerHeaderBackgroundView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayListControllerHeaderBackgroundView.swift; sourceTree = "<group>"; };
 		04093C2625BF06A700AE90CD /* PlayListController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayListController.swift; sourceTree = "<group>"; };
 		04093C2725BF06A700AE90CD /* PlayListControllerHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayListControllerHeaderView.swift; sourceTree = "<group>"; };
 		04093C2825BF06A700AE90CD /* PlayListCustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayListCustomCell.swift; sourceTree = "<group>"; };
@@ -205,9 +209,7 @@
 		04093CAB25BF06E700AE90CD /* UIColor+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		04093CAC25BF06E700AE90CD /* UIImage+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
 		04093CAD25BF06E700AE90CD /* UITabBar+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITabBar+Extensions.swift"; sourceTree = "<group>"; };
-		04093CAE25BF06E700AE90CD /* UIViewController+Inject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Inject.h"; sourceTree = "<group>"; };
 		04093CAF25BF06E700AE90CD /* Kingfisher+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Kingfisher+Extensions.swift"; sourceTree = "<group>"; };
-		04093CB025BF06E700AE90CD /* UIViewController+Inject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Inject.m"; sourceTree = "<group>"; };
 		04093CB925BF06F300AE90CD /* MusicPlayRxAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicPlayRxAPI.swift; sourceTree = "<group>"; };
 		04093CBA25BF06F300AE90CD /* MusicPlayDiscCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicPlayDiscCollectionView.swift; sourceTree = "<group>"; };
 		04093CBB25BF06F300AE90CD /* MusicPlayProgressBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicPlayProgressBarView.swift; sourceTree = "<group>"; };
@@ -260,6 +262,15 @@
 		04093DAC25BF0D9500AE90CD /* EMTabbarIcon.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = EMTabbarIcon.bundle; sourceTree = "<group>"; };
 		04093DC125BF133B00AE90CD /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		0430AF3E25C3A0D300CF76E3 /* MJRefreshGifHeader+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MJRefreshGifHeader+Extensions.swift"; sourceTree = "<group>"; };
+		0430AF6E25C5102A00CF76E3 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
+		0430AF7925C54A8B00CF76E3 /* UIViewController+DidLayoutInject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+DidLayoutInject.h"; sourceTree = "<group>"; };
+		0430AF7A25C54A8B00CF76E3 /* UIViewController+DidLayoutInject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+DidLayoutInject.m"; sourceTree = "<group>"; };
+		0430AF7D25C54AC900CF76E3 /* UIViewController+PopGestureState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+PopGestureState.h"; sourceTree = "<group>"; };
+		0430AF7E25C54AC900CF76E3 /* UIViewController+PopGestureState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+PopGestureState.m"; sourceTree = "<group>"; };
+		0430AF8625C54C7E00CF76E3 /* NSObject+Swizzle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+Swizzle.h"; sourceTree = "<group>"; };
+		0430AF8725C54C7E00CF76E3 /* NSObject+Swizzle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Swizzle.m"; sourceTree = "<group>"; };
+		0451EC1125C6BFA000BF5E0E /* UIImage+blur.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+blur.m"; sourceTree = "<group>"; };
+		0451EC1225C6BFA000BF5E0E /* UIImage+blur.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+blur.h"; sourceTree = "<group>"; };
 		0460B78625C28E12005A3703 /* SearchRxAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchRxAPI.swift; sourceTree = "<group>"; };
 		0460B78A25C29138005A3703 /* MVInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MVInfoModel.swift; sourceTree = "<group>"; };
 		64B9B6B9D01B08C207C4C914 /* Pods_WangYiMusic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WangYiMusic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -357,8 +368,8 @@
 				04093C2625BF06A700AE90CD /* PlayListController.swift */,
 				04093C2825BF06A700AE90CD /* PlayListCustomCell.swift */,
 				04093C2725BF06A700AE90CD /* PlayListControllerHeaderView.swift */,
+				04093C2525BF06A700AE90CD /* PlayListControllerHeaderBackgroundView.swift */,
 				04093C2325BF06A700AE90CD /* PlayListControllerSectionHeaderView.swift */,
-				04093C2525BF06A700AE90CD /* PlayListCustomArcView.swift */,
 				04093C2425BF06A700AE90CD /* PlayListRxAPI.swift */,
 			);
 			path = PlayList;
@@ -475,8 +486,15 @@
 				04093CAB25BF06E700AE90CD /* UIColor+Extensions.swift */,
 				04093CAC25BF06E700AE90CD /* UIImage+Extensions.swift */,
 				04093CAD25BF06E700AE90CD /* UITabBar+Extensions.swift */,
-				04093CAE25BF06E700AE90CD /* UIViewController+Inject.h */,
-				04093CB025BF06E700AE90CD /* UIViewController+Inject.m */,
+				0430AF6E25C5102A00CF76E3 /* Array+Extensions.swift */,
+				0451EC1225C6BFA000BF5E0E /* UIImage+blur.h */,
+				0451EC1125C6BFA000BF5E0E /* UIImage+blur.m */,
+				0430AF8625C54C7E00CF76E3 /* NSObject+Swizzle.h */,
+				0430AF8725C54C7E00CF76E3 /* NSObject+Swizzle.m */,
+				0430AF7D25C54AC900CF76E3 /* UIViewController+PopGestureState.h */,
+				0430AF7E25C54AC900CF76E3 /* UIViewController+PopGestureState.m */,
+				0430AF7925C54A8B00CF76E3 /* UIViewController+DidLayoutInject.h */,
+				0430AF7A25C54A8B00CF76E3 /* UIViewController+DidLayoutInject.m */,
 				04093D7E25BF091500AE90CD /* UIColor+imageMostColor.h */,
 				04093D7F25BF091500AE90CD /* UIColor+imageMostColor.m */,
 			);
@@ -741,8 +759,10 @@
 				04093C7E25BF06A700AE90CD /* DiscoverMusicColumnBarView.swift in Sources */,
 				04093D8025BF091500AE90CD /* UIColor+imageMostColor.m in Sources */,
 				04093CCE25BF06F300AE90CD /* MusicPlayDiscCollectionViewCell.swift in Sources */,
+				0430AF6F25C5102A00CF76E3 /* Array+Extensions.swift in Sources */,
 				04093C7625BF06A700AE90CD /* PlayListAllCategoryCell.swift in Sources */,
 				04093C7125BF06A700AE90CD /* PlayListPlazaCategoryModel.swift in Sources */,
+				0451EC1325C6BFA000BF5E0E /* UIImage+blur.m in Sources */,
 				04093C7D25BF06A700AE90CD /* PlayListPlazaAllBoutiqueCategoryPresentationController.swift in Sources */,
 				04093D5725BF070200AE90CD /* LLSnakePageControl.swift in Sources */,
 				04093C8D25BF06A700AE90CD /* HotSearchModel.swift in Sources */,
@@ -752,6 +772,7 @@
 				04093D5825BF070200AE90CD /* LLCycleScrollViewCell.swift in Sources */,
 				04093C7B25BF06A700AE90CD /* PlayListPlazaContentBoutiqueController.swift in Sources */,
 				04093CCA25BF06F300AE90CD /* MusicPlayShrinkControlPannelProgressBtn.swift in Sources */,
+				0430AFD525C5B10400CF76E3 /* MusicPlayManager.swift in Sources */,
 				04093C8725BF06A700AE90CD /* PlayCountLabel.swift in Sources */,
 				04093C7C25BF06A700AE90CD /* PlayListPlazaContentRecommendController.swift in Sources */,
 				04093D6125BF070200AE90CD /* Single+Response.swift in Sources */,
@@ -775,7 +796,7 @@
 				04093C8F25BF06A700AE90CD /* InnerCollectionViewCell.swift in Sources */,
 				04093C9525BF06A700AE90CD /* RecommendCollectionView.swift in Sources */,
 				04093C7825BF06A700AE90CD /* RxPlayListPlazaAPI.swift in Sources */,
-				04093C6C25BF06A700AE90CD /* PlayListCustomArcView.swift in Sources */,
+				04093C6C25BF06A700AE90CD /* PlayListControllerHeaderBackgroundView.swift in Sources */,
 				04093CA725BF06A700AE90CD /* EMBaseNavigationController.swift in Sources */,
 				04093CD025BF06F300AE90CD /* MusicPlayTopBarView.swift in Sources */,
 				04093CA625BF06A700AE90CD /* EMBaseAPI+Rx.swift in Sources */,
@@ -785,13 +806,13 @@
 				04093CC925BF06F300AE90CD /* MusicPlayProgressBarView.swift in Sources */,
 				04093D5C25BF070200AE90CD /* GXSegmentTitleView.swift in Sources */,
 				04093C9625BF06A700AE90CD /* YuncunKTVSectionView.swift in Sources */,
+				0430AF8825C54C7E00CF76E3 /* NSObject+Swizzle.m in Sources */,
 				04093C6E25BF06A700AE90CD /* PlayListControllerHeaderView.swift in Sources */,
 				04093C0B25BF057500AE90CD /* AppDelegate.swift in Sources */,
 				04093C7225BF06A700AE90CD /* PlayListPlazaOverallController.swift in Sources */,
 				04093D6025BF070200AE90CD /* MoyaProvider+Rx.swift in Sources */,
 				04093C7A25BF06A700AE90CD /* PlayListPlazaContentCommonController.swift in Sources */,
 				04093CCC25BF06F300AE90CD /* MusicPlayBottomControlView.swift in Sources */,
-				04093CB625BF06E700AE90CD /* UIViewController+Inject.m in Sources */,
 				04093C6B25BF06A700AE90CD /* PlayListRxAPI.swift in Sources */,
 				04093C7525BF06A700AE90CD /* PlayListPlazaCommonCell.swift in Sources */,
 				04093C7325BF06A700AE90CD /* PlayListPlazaOverallCategoryController.swift in Sources */,
@@ -806,6 +827,7 @@
 				04093D8525BF0A5300AE90CD /* MyService.swift in Sources */,
 				04093C6A25BF06A700AE90CD /* PlayListControllerSectionHeaderView.swift in Sources */,
 				04093D5425BF070200AE90CD /* LLViewExtensions.swift in Sources */,
+				0430AF7F25C54AC900CF76E3 /* UIViewController+PopGestureState.m in Sources */,
 				04093CA525BF06A700AE90CD /* DiscoverMusicController.swift in Sources */,
 				04093CD425BF06F300AE90CD /* MusicPlayInfoBarView.swift in Sources */,
 				04093C9925BF06A700AE90CD /* DjprogramSectionCell.swift in Sources */,
@@ -813,11 +835,11 @@
 				04093CD225BF06F300AE90CD /* MusicPlayTransitionManage.swift in Sources */,
 				04093C8625BF06A700AE90CD /* EMRankingListModel.swift in Sources */,
 				04093D5925BF070200AE90CD /* LLFilledPageControl.swift in Sources */,
-				04093CCB25BF06F300AE90CD /* MusicPlayManager.swift in Sources */,
 				04093CA425BF06A700AE90CD /* RankingListSectionCell.swift in Sources */,
 				04093C7025BF06A700AE90CD /* PlayListPlazaAllBoutiqueCategoryController.swift in Sources */,
 				04093C8025BF06A700AE90CD /* EMVoiceLiveModel.swift in Sources */,
 				04093C6F25BF06A700AE90CD /* PlayListCustomCell.swift in Sources */,
+				0430AF7B25C54A8B00CF76E3 /* UIViewController+DidLayoutInject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

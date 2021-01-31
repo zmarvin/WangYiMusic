@@ -161,14 +161,15 @@ class MusicPlayController: UIViewController {
                     guard let imageView = self?.backgroundImageView else {return}
                     guard let unwrapImage = image else {return}
                     DispatchQueue(label: "MusicPlayConroller.backgroundImageView").async {
-                        guard let resultImage = unwrapImage.gaussianBlur() else {return}
+                        guard let scaleImage = unwrapImage.aspectFillScaleToSize(newSize: CGSize(width: 10, height: 10), scale: 1) else {return}
+//                        guard let resultImage = scaleImage.gaussianBlur() else {return}
                         DispatchQueue.main.async {
                             let transitionAnimation = CABasicAnimation(keyPath: "contents")
                             transitionAnimation.fromValue = imageView.image
-                            transitionAnimation.toValue = resultImage
-                            transitionAnimation.duration = 0.5
+                            transitionAnimation.toValue = scaleImage
+                            transitionAnimation.duration = 0.8
                             imageView.layer.add(transitionAnimation, forKey: "MusicPlayBackgroundImageTransitionAnimation")
-                            imageView.image = resultImage
+                            imageView.image = scaleImage
                         }
                         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1) {
                             imageView.layer.removeAllAnimations()

@@ -39,6 +39,7 @@ class DiscoverMusicController: UITableViewController,DiscoverMusicCellDelegate, 
         self.tableView.showsVerticalScrollIndicator = false
         self.tableView.separatorStyle = .none
         self.nav_BackBarButtonColor = .custom
+        self.edgesForExtendedLayout = [.left,.right]
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

@@ -4,9 +4,11 @@
 
 
 //#import <MobileVLCKit/MobileVLCKit.h>
-#import <MBProgressHUD/MBProgressHUD.h>
 //#import <EMAnchorStationModule/EMAnchorStationModule.h>
+//#import <EMAccountModule/EMAccountTableViewController.h>
+#import <MBProgressHUD/MBProgressHUD.h>
 #import "UIColor+imageMostColor.h"
 #import <MJRefresh/MJRefresh.h>
-#import "UIViewController+Inject.h"
-//#import <EMAccountModule/EMAccountTableViewController.h>
+#import "UIViewController+PopGestureState.h"
+#import "UIViewController+DidLayoutInject.h"
+#import "UIImage+blur.h"

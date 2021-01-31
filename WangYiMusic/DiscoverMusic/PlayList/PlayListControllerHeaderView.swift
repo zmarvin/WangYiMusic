@@ -9,7 +9,7 @@
 import Foundation
 import RxSwift
 
-class PlayListControllerHeaderView: PlayListCustomArcView {
+class PlayListControllerHeaderView: PlayListControllerHeaderBackgroundView {
     let disposeBag = DisposeBag()
     
     let imageView = UIImageView()
@@ -22,7 +22,7 @@ class PlayListControllerHeaderView: PlayListCustomArcView {
     let descriptionlabel = UILabel()
     let detailDescriptionBtn = UIButton()
     
-    let beltBackgroundShadowView = UIView()
+    let beltBackgroundView = UIView()
     let subscribedCountBtn = UIButton()
     let commentCountBtn = UIButton()
     let shareCountBtn = UIButton()
@@ -31,6 +31,20 @@ class PlayListControllerHeaderView: PlayListCustomArcView {
         super.init(frame: frame)
         self.backgroundColor = .clear
         self.addSubview(imageView)
+        imageView.addSubview(playCountLabel)
+        self.addSubview(titleLabel)
+        self.addSubview(creatorAvatarImageView)
+        self.addSubview(creatorNicknameLabel)
+        self.addSubview(subscribeCreatorBtn)
+        self.addSubview(descriptionlabel)
+        self.addSubview(detailDescriptionBtn)
+        self.addSubview(beltBackgroundView)
+//        let beltContentView = UIView()
+//        beltBackgroundView.addSubview(beltContentView)
+        beltBackgroundView.addSubview(subscribedCountBtn)
+        beltBackgroundView.addSubview(commentCountBtn)
+        beltBackgroundView.addSubview(shareCountBtn)
+        
         imageView.layer.cornerRadius = 8
         imageView.layer.masksToBounds = true
         imageView.snp.makeConstraints { (make) in
@@ -40,9 +54,7 @@ class PlayListControllerHeaderView: PlayListCustomArcView {
             make.height.equalTo(130)
         }
         
-        imageView.addSubview(playCountLabel)
         playCountLabel.textColor = .white
-//        playCountLabel.backgroundColor = UIColor(red: 155/255.0, green: 140/255.0, blue: 160/255.0, alpha: 1)
         let tempSize = self.playCountLabel.bounds.size
         playCountLabel.snp.makeConstraints { (make) in
             make.top.equalToSuperview().offset(3)
@@ -51,7 +63,6 @@ class PlayListControllerHeaderView: PlayListCustomArcView {
             make.height.equalTo(tempSize.height)
         }
         
-        self.addSubview(titleLabel)
         titleLabel.numberOfLines = 2
         titleLabel.textColor = .white
         titleLabel.snp.makeConstraints { (make) in
@@ -61,7 +72,6 @@ class PlayListControllerHeaderView: PlayListCustomArcView {
             make.height.equalTo(50)
         }
         
-        self.addSubview(creatorAvatarImageView)
         let creatorAvatarImageViewWH : CGFloat = 30
         creatorAvatarImageView.layer.cornerRadius = creatorAvatarImageViewWH/2
         creatorAvatarImageView.layer.masksToBounds = true
@@ -73,7 +83,6 @@ class PlayListControllerHeaderView: PlayListCustomArcView {
             make.width.equalTo(creatorAvatarImageViewWH)
         }
         
-        self.addSubview(creatorNicknameLabel)
         creatorNicknameLabel.font = .systemFont(ofSize: 12)
         creatorNicknameLabel.textColor = .white
         creatorNicknameLabel.snp.makeConstraints { (make) in
@@ -83,7 +92,6 @@ class PlayListControllerHeaderView: PlayListCustomArcView {
             make.width.equalTo(100)
         }
         
-        self.addSubview(subscribeCreatorBtn)
         subscribeCreatorBtn.setImage(UIImage(named: "em_playlist_subscribe"), for: UIControl.State.normal)
         subscribeCreatorBtn.setBackgroundImage(UIImage(named: "em_playlist_subscribe_back"), for: UIControl.State.normal)
         subscribeCreatorBtn.snp.makeConstraints { (make) in
@@ -101,7 +109,6 @@ class PlayListControllerHeaderView: PlayListCustomArcView {
             }
         }).disposed(by: disposeBag)
 
-        self.addSubview(descriptionlabel)
         descriptionlabel.textColor = .white
         descriptionlabel.numberOfLines = 1
         descriptionlabel.font = .systemFont(ofSize: 12)
@@ -112,7 +119,6 @@ class PlayListControllerHeaderView: PlayListCustomArcView {
             make.right.equalToSuperview().offset(-30)
         }
         
-        self.addSubview(detailDescriptionBtn)
         detailDescriptionBtn.setImage(UIImage(named: "em_playlist_detail_arr"), for: UIControl.State.normal)
         detailDescriptionBtn.snp.makeConstraints { (make) in
             make.left.equalTo(descriptionlabel.snp.right)
@@ -122,34 +128,27 @@ class PlayListControllerHeaderView: PlayListCustomArcView {
         
         let beltBackgroundViewH : CGFloat = 45
         let roundedRect = CGRect(x: 0, y: 0, width: WY_SCREEN_WIDTH - 55*2, height: beltBackgroundViewH)
-        beltBackgroundShadowView.layer.shadowPath = UIBezierPath(roundedRect: roundedRect, cornerRadius: beltBackgroundViewH/2).cgPath
-        beltBackgroundShadowView.layer.shadowRadius = 3
-        beltBackgroundShadowView.layer.shadowOpacity = 0.3
-        beltBackgroundShadowView.layer.shadowOffset = CGSize(width: 2, height: 2)
-        beltBackgroundShadowView.layer.shadowColor = UIColor.lightGray.cgColor
-        beltBackgroundShadowView.layer.cornerRadius = beltBackgroundViewH/2
-        beltBackgroundShadowView.layer.masksToBounds = false
-        self.addSubview(beltBackgroundShadowView)
-        beltBackgroundShadowView.snp.makeConstraints { (make) in
+        beltBackgroundView.layer.shadowPath = UIBezierPath(roundedRect: roundedRect, cornerRadius: beltBackgroundViewH/2).cgPath
+        beltBackgroundView.layer.shadowRadius = 3
+        beltBackgroundView.layer.shadowOpacity = 0.3
+        beltBackgroundView.layer.shadowOffset = CGSize(width: 2, height: 2)
+        beltBackgroundView.layer.shadowColor = UIColor.lightGray.cgColor
+        beltBackgroundView.layer.cornerRadius = beltBackgroundViewH/2
+        beltBackgroundView.layer.masksToBounds = false
+        beltBackgroundView.snp.makeConstraints { (make) in
             make.left.equalToSuperview().offset(55)
             make.right.equalToSuperview().offset(-55)
             make.top.equalTo(imageView.snp.bottom).offset(25)
             make.height.equalTo(beltBackgroundViewH)
         }
-        
-        let beltBackgroundView = UIView()
-        beltBackgroundShadowView.addSubview(beltBackgroundView)
         beltBackgroundView.backgroundColor = .white
-        beltBackgroundView.layer.cornerRadius = beltBackgroundViewH/2
-        beltBackgroundView.layer.masksToBounds = true
+//        beltContentView.backgroundColor = .white
+//        beltContentView.layer.cornerRadius = beltBackgroundViewH/2
+//        beltContentView.layer.masksToBounds = true
         
         subscribedCountBtn.titleLabel?.contentMode = .center
         commentCountBtn.titleLabel?.contentMode = .center
         shareCountBtn.titleLabel?.contentMode = .center
-        
-        beltBackgroundView.addSubview(subscribedCountBtn)
-        beltBackgroundView.addSubview(commentCountBtn)
-        beltBackgroundView.addSubview(shareCountBtn)
         
         subscribedCountBtn.titleLabel?.font = UIFont.systemFont(ofSize: 10)
         subscribedCountBtn.setImage(UIImage(named: "em_playlist_fav_new"), for: UIControl.State.normal)
@@ -166,10 +165,9 @@ class PlayListControllerHeaderView: PlayListCustomArcView {
         shareCountBtn.setTitle("100", for: UIControl.State.normal)
         shareCountBtn.setTitleColor(.black, for: UIControl.State.normal)
         
-        beltBackgroundView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
-        }
-
+//        beltContentView.snp.makeConstraints { (make) in
+//            make.edges.equalToSuperview()
+//        }
         subscribedCountBtn.snp.makeConstraints { (make) in
             make.top.left.bottom.equalToSuperview()
             make.width.equalToSuperview().dividedBy(3)
@@ -184,49 +182,53 @@ class PlayListControllerHeaderView: PlayListCustomArcView {
             make.left.equalTo(commentCountBtn.snp.right)
             make.right.equalToSuperview()
         }
-        self.setUpVipBeltView()
+        self.setUpBottomBeltView()
     }
     
-    func setUpVipBeltView() {
-        let vipBeltBackgroundView = UIView()
-        vipBeltBackgroundView.layer.borderColor = UIColor.gray.cgColor
-        vipBeltBackgroundView.layer.borderWidth = 0.08
-        self.addSubview(vipBeltBackgroundView)
-        vipBeltBackgroundView.layer.cornerRadius = 8
-        vipBeltBackgroundView.layer.masksToBounds = true
-        vipBeltBackgroundView.snp.makeConstraints { (make) in
+    func setUpBottomBeltView() {
+        let bottomBeltBackgroundView = UIView()
+        let leftIconImageView = UIImageView()
+        let textLabel = UILabel()
+        let arrowIcon = UIImageView()
+        let subTextLabel = UILabel()
+
+        self.addSubview(bottomBeltBackgroundView)
+        bottomBeltBackgroundView.addSubview(leftIconImageView)
+        bottomBeltBackgroundView.addSubview(textLabel)
+        bottomBeltBackgroundView.addSubview(arrowIcon)
+        bottomBeltBackgroundView.addSubview(subTextLabel)
+
+        bottomBeltBackgroundView.layer.borderColor = UIColor.gray.cgColor
+        bottomBeltBackgroundView.layer.borderWidth = 0.08
+        bottomBeltBackgroundView.layer.cornerRadius = 8
+        bottomBeltBackgroundView.layer.masksToBounds = true
+        bottomBeltBackgroundView.snp.makeConstraints { (make) in
             make.left.equalToSuperview().offset(12)
             make.right.equalToSuperview().offset(-12)
             make.height.equalTo(45)
             make.bottom.equalToSuperview().offset(-1)
         }
         
-        let vipIconImageView = UIImageView()
-        vipIconImageView.contentMode = .scaleAspectFit
-        vipBeltBackgroundView.addSubview(vipIconImageView)
-        vipIconImageView.image = UIImage(named: "em_playlist_icon_vip")?.withRenderingMode(.alwaysTemplate)
-        vipIconImageView.tintColor = .red
-        vipIconImageView.snp.makeConstraints { (make) in
+        leftIconImageView.contentMode = .scaleAspectFit
+        leftIconImageView.image = UIImage(named: "em_playlist_icon_vip")?.withRenderingMode(.alwaysTemplate)
+        leftIconImageView.tintColor = .red
+        leftIconImageView.snp.makeConstraints { (make) in
             make.left.equalToSuperview().offset(10)
             make.width.equalTo(25)
             make.height.equalTo(25)
             make.centerY.equalToSuperview()
         }
         
-        let textLabel = UILabel()
         textLabel.text = "含3首VIP专享歌曲"
         textLabel.font = UIFont.systemFont(ofSize: 15)
         textLabel.textAlignment = .left
-        vipBeltBackgroundView.addSubview(textLabel)
         textLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(vipIconImageView.snp.right).offset(10)
+            make.left.equalTo(leftIconImageView.snp.right).offset(10)
             make.top.bottom.equalToSuperview()
             make.width.equalTo(150)
         }
 
-        let arrowIcon = UIImageView()
         arrowIcon.contentMode = .scaleAspectFit
-        vipBeltBackgroundView.addSubview(arrowIcon)
         arrowIcon.image = UIImage(named: "em_playlist_detail_arr")?.withRenderingMode(.alwaysTemplate)
         arrowIcon.tintColor = .gray
         arrowIcon.snp.makeConstraints { (make) in
@@ -236,12 +238,10 @@ class PlayListControllerHeaderView: PlayListCustomArcView {
             make.centerY.equalToSuperview()
         }
         
-        let subTextLabel = UILabel()
         subTextLabel.text = "首开VIP仅5元"
         subTextLabel.textAlignment = .right
         subTextLabel.font = .systemFont(ofSize: 12)
         subTextLabel.textColor = .gray
-        vipBeltBackgroundView.addSubview(subTextLabel)
         subTextLabel.snp.makeConstraints { (make) in
             make.right.equalTo(arrowIcon.snp.left)
             make.top.bottom.equalToSuperview()
