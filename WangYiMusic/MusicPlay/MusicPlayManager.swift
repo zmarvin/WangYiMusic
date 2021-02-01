@@ -229,7 +229,6 @@ extension MusicPlayManager : STKAudioPlayerDelegate {
             print("eof")
         case .error:
             print("error")
-
         @unknown default:
             fatalError()
         }

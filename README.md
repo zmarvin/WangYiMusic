@@ -5,6 +5,7 @@
 * StreamingKit实现音频。
 * ijkplayer实现卡片视频。
 * 主要实现了主页，歌单，播放器
+* 我在B站上传了播放器的清晰版：[链接](https://www.bilibili.com/video/BV1A54y1W7TT)
 	
 ## 效果图 
 （ 考虑到文件大小，降低了渲染效果。）

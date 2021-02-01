@@ -39,8 +39,7 @@ class PlayListControllerHeaderView: PlayListControllerHeaderBackgroundView {
         self.addSubview(descriptionlabel)
         self.addSubview(detailDescriptionBtn)
         self.addSubview(beltBackgroundView)
-//        let beltContentView = UIView()
-//        beltBackgroundView.addSubview(beltContentView)
+
         beltBackgroundView.addSubview(subscribedCountBtn)
         beltBackgroundView.addSubview(commentCountBtn)
         beltBackgroundView.addSubview(shareCountBtn)
@@ -142,9 +141,6 @@ class PlayListControllerHeaderView: PlayListControllerHeaderBackgroundView {
             make.height.equalTo(beltBackgroundViewH)
         }
         beltBackgroundView.backgroundColor = .white
-//        beltContentView.backgroundColor = .white
-//        beltContentView.layer.cornerRadius = beltBackgroundViewH/2
-//        beltContentView.layer.masksToBounds = true
         
         subscribedCountBtn.titleLabel?.contentMode = .center
         commentCountBtn.titleLabel?.contentMode = .center
@@ -164,10 +160,7 @@ class PlayListControllerHeaderView: PlayListControllerHeaderBackgroundView {
         shareCountBtn.setImage(UIImage(named: "em_playlist_share_new"), for: UIControl.State.normal)
         shareCountBtn.setTitle("100", for: UIControl.State.normal)
         shareCountBtn.setTitleColor(.black, for: UIControl.State.normal)
-        
-//        beltContentView.snp.makeConstraints { (make) in
-//            make.edges.equalToSuperview()
-//        }
+
         subscribedCountBtn.snp.makeConstraints { (make) in
             make.top.left.bottom.equalToSuperview()
             make.width.equalToSuperview().dividedBy(3)

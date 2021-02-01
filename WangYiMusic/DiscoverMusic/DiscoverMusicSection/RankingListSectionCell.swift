@@ -59,8 +59,5 @@ class RankingListSectionCell: UITableViewCell {
                 make.edges.equalToSuperview()
             }
         }
-
-        
-
     }
 }

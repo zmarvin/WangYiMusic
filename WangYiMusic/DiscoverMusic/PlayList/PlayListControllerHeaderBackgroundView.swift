@@ -9,10 +9,8 @@ import Foundation
 import UIKit
 
 class PlayListControllerHeaderBackgroundView: UIView{
-//    private let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffect.Style.light))
     
     var backgroundImageView = UIImageView()
-//    let backgroundImageView : UINavigationBar
     var imageViewHeight : CGFloat = 190
     private lazy var arcLayer: CAShapeLayer = {
         let arcLayer = CAShapeLayer()
@@ -29,32 +27,11 @@ class PlayListControllerHeaderBackgroundView: UIView{
         arcLayer.fillColor = UIColor.white.cgColor
         return arcLayer
     }()
-//    let navC = UINavigationController()
+
     override init(frame: CGRect) {
-        
-//        backgroundImageView = navC.navigationBar
         super.init(frame: frame)
-//        navC.navigationBar.isTranslucent = false
-//        navC.navigationBar.shadowImage = UIImage()
         
         self.addSubview(backgroundImageView)
-//        backgroundImageView.addSubview(visualEffectView)
-//        backgroundImageView.contentMode = .scaleAspectFill
-//        backgroundImageView.autoresizingMask = [.flexibleHeight,.flexibleWidth]
-
-//        backgroundImageView.snp.makeConstraints { (make) in
-//            make.top.left.right.equalToSuperview()
-//            make.height.equalTo(self.imageViewHeight)
-//        }
-        
-//        visualEffectView.snp.makeConstraints { (make) in
-//            make.edges.equalToSuperview()
-//        }
-//
-//        visualEffectView.subviews.forEach { (view) in
-//            view.isHidden = true
-//        }
-//        visualEffectView.isHidden = true
     }
     
     override func layoutSubviews() {

@@ -102,6 +102,4 @@
     return returnImage;
 }
 
-
-
 @end

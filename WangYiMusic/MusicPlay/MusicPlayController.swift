@@ -197,29 +197,33 @@ class MusicPlayController: UIViewController {
             self?.bottomControlView.progressBarView.rightTimeLable.text = self?.formateTime(duration)
         }).disposed(by: disposeBag)
         
-        MusicPlayManager.shared.rx.observe(\.isPlaying).delaySubscription(RxTimeInterval.seconds(Int(musicPlayControllerTransitionAnimateDuration)), scheduler: MainScheduler.instance).observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] isPlaying in
-            if isPlaying {
-                self?.discCollectionView.startAnimation()
-                self?.bottomControlView.controlBtn.isSelected = true
-                UIView.animate(withDuration: 0.2) {
-                    self?.needleImageView.transform = CGAffineTransform(rotationAngle: 0)
+        Observable.combineLatest(MusicPlayManager.shared.rx.observe(\.isPlaying), discCollectionView.rx.observe(\.isScrolling))
+            .delaySubscription(RxTimeInterval.seconds(Int(musicPlayControllerTransitionAnimateDuration)), scheduler: MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] isPlaying,isScrolling in
+                if isPlaying && !isScrolling{
+                    self?.discCollectionView.startAnimation()
+                    self?.bottomControlView.controlBtn.isSelected = true
+                    self?.setUpNeedleImageViewState(isDrop: true)
+                }else if isPlaying && isScrolling{
+                    self?.discCollectionView.pauseAnimation()
+                    self?.bottomControlView.controlBtn.isSelected = true
+                    self?.setUpNeedleImageViewState(isDrop: false)
+                }else{// !isPlaying
+                    self?.discCollectionView.pauseAnimation()
+                    self?.bottomControlView.controlBtn.isSelected = false
+                    self?.setUpNeedleImageViewState(isDrop: false)
                 }
-            }else{
-                self?.discCollectionView.pauseAnimation()
-                self?.bottomControlView.controlBtn.isSelected = false
-                UIView.animate(withDuration: 0.2) {
-                    self?.needleImageView.transform = CGAffineTransform(rotationAngle: CGFloat(-Double.pi/8))
-                }
-            }
         }).disposed(by: disposeBag)
         
-        discCollectionView.rx.observe(\.isScrolling).subscribe(onNext: { [weak self] isScrolling in
-            UIView.animate(withDuration: 0.2) {
-                self?.needleImageView.transform = CGAffineTransform(rotationAngle: isScrolling ? CGFloat(-Double.pi/8) : 0)
-            }
-        }).disposed(by: disposeBag)
     }
 
+    func setUpNeedleImageViewState(isDrop:Bool) {
+        UIView.animate(withDuration: 0.2) {
+            self.needleImageView.transform = CGAffineTransform(rotationAngle: isDrop ? 0 : CGFloat(-Double.pi/8) )
+        }
+    }
+    
     @objc func loopBtnClick(btn:UIButton) {
         
         MusicPlayManager.shared.loopType.next()

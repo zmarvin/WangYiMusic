@@ -69,7 +69,6 @@ class MusicPlayingTableView: UIView ,UITableViewDelegate ,UITableViewDataSource{
             make.top.equalTo(barView.snp.bottom)
             make.bottom.equalTo(bottomBtn.snp.top)
         }
-
     }
     
     required init?(coder aDecoder: NSCoder) {

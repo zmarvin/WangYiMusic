@@ -70,6 +70,7 @@ class MusicPlayControllerDismissAnimatedTransitioning: NSObject, UIViewControlle
 //                _ = tempDiscImageView
             }
             func refreshState(){
+                maskView.removeFromSuperview()
                 shrinkControlView.discImageView.isHidden = false
                 tempDiscImageView.removeFromSuperview()
                 vc.discCollectionView.isHidden = false
@@ -206,10 +207,9 @@ class MusicPlayForDismissalInteraction: UIPercentDrivenInteractiveTransition {
         switch pan.state {
         case .began:
             self.isInteraction = true
-            if let responder = pan.view?.next, let vc = responder as? MusicPlayController{
+            if let vc = pan.view?.viewController() as? MusicPlayController{
                 vc.dismiss(animated: true, completion: nil)
             }
-            break
         case .changed:
             self.update(progress)
         case .ended:

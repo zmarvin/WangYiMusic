@@ -124,7 +124,7 @@ class MusicPlayShrinkControllPannelView: UIButton, UINavigationControllerDelegat
             self.playOrPauseBtn.progress = CGFloat(progress/duration)
         }).disposed(by: disposeBag)
         
-        MusicPlayManager.shared.audioPlayer.rx.observe(\.state).map{$0 == .playing}.observe(on: MainScheduler.instance).subscribe(onNext: { isPlaying in
+        MusicPlayManager.shared.rx.observe(\.isPlaying).observe(on: MainScheduler.instance).subscribe(onNext: { isPlaying in
             self.playOrPauseBtn.isSelected = isPlaying
             if isPlaying {
                 self.resumeAnimation()

@@ -36,7 +36,6 @@ class MusicPlayDiscCollectionView: UICollectionView, UICollectionViewDataSource,
     }
     
     var scrollSelectItemCallBack : ((Int) -> Void)?
-    var isAnimatingBeforeDragging = false
     @objc dynamic var isScrolling = false
     
     func pauseAnimation() {
@@ -86,11 +85,6 @@ class MusicPlayDiscCollectionView: UICollectionView, UICollectionViewDataSource,
     }
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        guard let currentCell = self.currentCell else { return }
-        if currentCell.isAnimating() {
-            self.currentCell?.pauseAnimation()
-            isAnimatingBeforeDragging = true
-        }
         isScrolling = true
     }
     
@@ -98,10 +92,6 @@ class MusicPlayDiscCollectionView: UICollectionView, UICollectionViewDataSource,
         let index = Int(scrollView.contentOffset.x/scrollView.bounds.size.width)
         print("当前index：\(index)")
         self.scrollSelectItemCallBack?(index)
-        if self.currentIndex == index && isAnimatingBeforeDragging{
-            self.currentCell?.resumeAnimation()
-            isAnimatingBeforeDragging = false // 恢复初始
-        }
         self.currentIndex = index
         isScrolling = false
     }

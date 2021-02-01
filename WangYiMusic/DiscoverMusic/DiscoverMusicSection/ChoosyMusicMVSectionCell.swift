@@ -57,7 +57,7 @@ class ChoosyMusicMVSectionCell: UICollectionViewCell {
         guard let isPlay = self.player?.isPlaying() else {
             guard let url = URL(string: mvUrl) else { return }
             self.createPlayer(with: url)
-//            play()
+            play()
             return
         }
         if !isPlay {
@@ -77,7 +77,7 @@ class ChoosyMusicMVSectionCell: UICollectionViewCell {
         }
     }
     func createPlayer(with url: URL) {
-        return
+        
         // 创建播放器
         let options = IJKFFOptions.byDefault()
         //开启硬解码 1是硬解 0是软解
