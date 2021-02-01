@@ -9,7 +9,7 @@
 import Foundation
 import SnapKit
 import RxSwift
-class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate, PlayListPlazaTopCarouselViewScrollCenterCellObserver {
     let disposeBag = DisposeBag()
     
     let segmentView = GXSegmentTitleView()
@@ -64,7 +64,9 @@ class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegat
     lazy var subViewControllers : [UIViewController] = {
         return inPlazaCategoryModels.map { categoryModel in
             if categoryModel.name == "推荐" {
-                return PlayListPlazaContentRecommendController()
+                let recommendController = PlayListPlazaContentRecommendController()
+                recommendController.topCarouselViewScrollCenterCellObserver = self
+                return recommendController
             }
             if categoryModel.name == "精品" {
                 return PlayListPlazaContentBoutiqueController()
@@ -127,8 +129,15 @@ class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegat
             make.left.bottom.right.equalToSuperview()
             make.top.equalTo(segmentView.snp.bottom)
         }
+        // 测试
+//        segmentView.isHidden = true
+//        self.view.addSubview(imageV)
+//        imageV.snp.makeConstraints { (make) in
+//            make.top.left.right.equalToSuperview()
+//            make.height.equalTo(50)
+//        }
     }
-    
+//    let imageV = UIImageView()
     func setUpState() {
         allCategoryBtn.rx.tap.subscribe(onNext: {[unowned self] in
             // MARK: push 所有分类控制器
@@ -143,6 +152,40 @@ class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegat
         if let scrollView = self.pageViewController.view.subviews.first as? UIScrollView , let gesture = self.navigationController?.interactivePopGestureRecognizer{
             scrollView.panGestureRecognizer.require(toFail: gesture)
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.navigationBar.setBackgroundImage(nil, for: UIBarMetrics.default)
+    }
+    
+    // MARK: -- PlayListPlazaTopCarouselViewScrollCenterCellObserver
+    func playListPlazaContentRecommendControllerTopCarouselViewScrollCenter(cell:PlayListPlazaCarouselCell,indexPath:IndexPath){
+//        guard let image = cell.imageView.image else { return }
+//
+//        let upExpectHeight = WY_NAV_BAR_HEIGHT + WY_STATUS_BAR_HEIGHT
+//        let downExpectHeight = self.segmentView.frame.height
+//        let expectHeight = upExpectHeight + downExpectHeight
+//        let expectWidth = WY_SCREEN_WIDTH
+//
+//        // 缩小尺寸
+//        let shrinkWidth : CGFloat = 3
+//        let shrinkHeight = shrinkWidth * expectHeight/expectWidth
+//        let shrinkImage = image.reSize(newSize: CGSize(width: shrinkWidth, height: shrinkHeight), scale: 1)
+//        let upShrinkHeight = upExpectHeight/expectHeight * shrinkHeight
+//        let downShrinkHeight = shrinkHeight - upShrinkHeight
+//        let upShrinkImage = shrinkImage?.cut(rect: CGRect(x: 0, y: 0, width: shrinkWidth, height: upShrinkHeight))
+//        let downShrinkImage = shrinkImage?.cut(rect: CGRect(x: 0, y: upShrinkHeight, width: shrinkWidth, height: downShrinkHeight))
+//        // 放大到期望的尺寸
+//        let upExpectImageT = upShrinkImage?.reSize(newSize: CGSize(width: expectWidth, height: upExpectHeight), scale: 1)
+//        let downExpectImageT = downShrinkImage?.reSize(newSize: CGSize(width: expectWidth, height: downExpectHeight), scale: 1)
+//        let blurNumber : CGFloat = 99
+//        let upExpectImage = UIImage.boxBlurImage( upExpectImageT, withBlurNumber: blurNumber).resizableImage(withCapInsets: UIEdgeInsets.zero, resizingMode: UIImage.ResizingMode.stretch)
+//        let downExpectImage = UIImage.boxBlurImage( downExpectImageT, withBlurNumber: blurNumber)
+//
+//        self.navigationController?.navigationBar.setBackgroundImage(upExpectImage, for: UIBarMetrics.default)
+//        self.segmentView.backgroundImageView.image = downExpectImage
+//        self.imageV.image = downExpectImage
     }
     
     // MARK: -- UIPageViewControllerDataSource

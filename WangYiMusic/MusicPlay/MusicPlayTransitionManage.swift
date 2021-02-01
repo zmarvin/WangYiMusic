@@ -16,16 +16,16 @@ class MusicPlayControllerDismissAnimatedTransitioning: NSObject, UIViewControlle
     }
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        guard transitionContext.isAnimated else {return}
         let containerView = transitionContext.containerView
         let fromView = transitionContext.view(forKey: UITransitionContextViewKey.from)!
         let fromVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)!
-        
         containerView.addSubview(fromView)
         
         if let vc = fromVC as? MusicPlayController,let currentCell = vc.discCollectionView.currentCell {
             guard let keyWindow = UIApplication.shared.keyWindow else {return}
             let shrinkControlView = MusicPlayShrinkControllPannelView.shared
-
+            // currentCell.discImageView.screenShot_10Scale() 使用currentCell的截图会在拖拽的时候卡顿
             let tempDiscImageView = UIImageView(image: shrinkControlView.discImageView.screenShot_10Scale())
             let discBigWindowFrame = currentCell.convert(currentCell.discImageView.frame, to: keyWindow)
             tempDiscImageView.frame = discBigWindowFrame
@@ -35,14 +35,14 @@ class MusicPlayControllerDismissAnimatedTransitioning: NSObject, UIViewControlle
             vc.discCollectionView.isHidden = true
             vc.circularTransparenceLayer.isHidden = true
             vc.needleImageView.isHidden = true
-
+            shrinkControlView.discImageView.isHidden = true
+            
             let maskView = UIView(frame: vc.view.bounds)
             maskView.backgroundColor = .white
             maskView.alpha = 0
             vc.view.addSubview(maskView)
 
             let fromValue = currentCell.discImageView.layer.presentation()?.value(forKeyPath: "transform.rotation.z") as! CGFloat
-            shrinkControlView.discImageView.isHidden = true
             let discSmallWindowframe = shrinkControlView.convert(shrinkControlView.discImageView.frame, to: keyWindow)
 
             UIView.animate(withDuration: musicPlayControllerTransitionAnimateDuration, animations: {
@@ -140,27 +140,24 @@ class MusicPlayControllerPresentedAnimatedTransitioning: NSObject, UIViewControl
             vc.view.frame = transitionContext.finalFrame(for: toVC)
             
         }, completion: { isCompletion in
-            
             maskView.removeFromSuperview()
             print("Presented动画完成")
-            transitionContext.completeTransition(true)
             //  MARK: animationDidStart 解决衔接时，偶有抖闪的问题
             vc.discCollectionView.currentCell?.reSetUpAnimation(fromValue: fromValue, animationDidStart: { [weak vc] in
                 vc?.discCollectionView.isHidden = false
                 tempDiscImageView.removeFromSuperview()
+                transitionContext.completeTransition(isCompletion)
             })
             vc.circularTransparenceLayer.isHidden = false
             vc.needleImageView.isHidden = false
             shrinkControlView.discImageView.isHidden = false
         })
-        // MARK: 1，防止completion不调用，2，防止暂停状态animationDidStart没有调用，3，多0.2秒,解决衔接时，偶有抖闪的问题
+        // MARK: 1，防止completion不调用
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + musicPlayControllerTransitionAnimateDuration + 0.2) {
-            vc.discCollectionView.isHidden = false
-            tempDiscImageView.removeFromSuperview()
+//            vc.discCollectionView.isHidden = false
+//            tempDiscImageView.removeFromSuperview()
         }
-        
     }
-
 }
 
 class MusicPlayTransitionManage: NSObject ,UIViewControllerTransitioningDelegate{
@@ -216,7 +213,7 @@ class MusicPlayForDismissalInteraction: UIPercentDrivenInteractiveTransition {
         case .changed:
             self.update(progress)
         case .ended:
-            if progress >= 0.5{
+            if progress >= 0.4{
                 self.finish()
             }else{
                 self.cancel()

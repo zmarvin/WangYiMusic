@@ -10,12 +10,18 @@ import Foundation
 import RxSwift
 import Kingfisher
 
+protocol PlayListPlazaTopCarouselViewScrollCenterCellObserver : class {
+    func playListPlazaContentRecommendControllerTopCarouselViewScrollCenter(cell:PlayListPlazaCarouselCell,indexPath:IndexPath)
+}
+
 class PlayListPlazaContentRecommendController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
     let disposeBag = DisposeBag()
     var API = RxPlayListPlazaAPI()
     let topCarouselViewHeight : CGFloat = 245
     var topCarouselModels : [PlayListPlazaModel] = [PlayListPlazaModel]()
     var underCollectionModels : [PlayListPlazaModel] = [PlayListPlazaModel]()
+    weak var topCarouselViewScrollCenterCellObserver : PlayListPlazaTopCarouselViewScrollCenterCellObserver?
+    
     lazy var topCarouselView : UICollectionView = {
         let layout = PlayListPlazaCarouselLayout()
         let itemWidth = UIScreen.main.bounds.width/2 - 15
@@ -206,6 +212,8 @@ class PlayListPlazaContentRecommendController: UIViewController, UICollectionVie
         guard let rightCell = self.topCarouselView.cellForItem(at: rightIndexPath) as? PlayListPlazaCarouselCell else{return}
         leftCell.frostedGlassView.alpha = 0.5
         rightCell.frostedGlassView.alpha = 0.5
+        
+        self.topCarouselViewScrollCenterCellObserver?.playListPlazaContentRecommendControllerTopCarouselViewScrollCenter(cell: cell, indexPath: indexPath)
     }
     
 }

@@ -19,8 +19,11 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
     let sectionHeaderView = PlayListControllerSectionHeaderView()
     let tableView = UITableView(frame: .zero, style: UITableView.Style.plain)
     var headerBackgroundImage : UIImage?
+    var headerUpPartNavBackgroundImage : UIImage?
     let reuseId = "PlayListController"
     let backStretchImageView = UIImageView()
+    let titleLabel = UILabel()
+    
     init(musicId:Int) {
         self.musicId = musicId
         super.init(nibName: nil, bundle: nil)
@@ -36,12 +39,24 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = "歌单"
+
         self.setUpView()
+        self.setupState()
         self.setUpData()
     }
-    
     func setUpView() {
+        
+        titleLabel.text = "歌单"
+        titleLabel.textAlignment = .center
+        titleLabel.textColor = .white
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        titleLabel.lineBreakMode = .byWordWrapping
+        titleLabel.frame = CGRect(origin: .zero, size: CGSize(width: 140, height: WY_NAV_BAR_HEIGHT))
+        let titleView = UIView(frame: CGRect(origin: .zero, size: CGSize(width: 140, height: WY_NAV_BAR_HEIGHT)))
+        titleView.clipsToBounds = true
+        titleView.addSubview(titleLabel)
+        self.navigationItem.titleView = titleView
+        
         self.tableView.dataSource = self
         self.tableView.delegate = self
         self.tableView.register(PlayListCustomCell.self, forCellReuseIdentifier: reuseId)
@@ -60,12 +75,14 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
         }
         
         self.tableView.insertSubview(backStretchImageView, at: 0)
-        backStretchImageView.frame = CGRect(x: 0, y: 0, width: WY_SCREEN_WIDTH, height: 10)
-        
+        backStretchImageView.frame = CGRect(x: 0, y: 0, width: WY_SCREEN_WIDTH, height: 1)
+    }
+    
+    func setupState() {
         self.tableHeaderView.imageView.rx.observe(\.image).subscribe(onNext:{ [unowned self] image in
             if let image = image {
-                let imageMostColor = UIColor.mostColor(with: image)
-                self.tableView.backgroundColor = imageMostColor
+//                let imageMostColor = UIColor.mostColor(with: image)
+//                self.tableView.backgroundColor = imageMostColor
                 
                 let upExpectHeight = WY_NAV_BAR_HEIGHT + WY_STATUS_BAR_HEIGHT
                 let downExpectHeight = self.tableHeaderView.imageViewHeight
@@ -89,14 +106,19 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
                 self.navigationController?.navigationBar.setBackgroundImage(upExpectImage, for: UIBarMetrics.default)
                 self.tableHeaderView.backgroundImageView.image = downExpectImage
                 
+                self.headerUpPartNavBackgroundImage = upExpectImage
                 UIGraphicsBeginImageContext(CGSize(width: expectWidth, height: expectHeight))
                 upExpectImage.draw(in: CGRect(origin: .zero, size: CGSize(width: expectWidth, height: upExpectHeight)))
                 downExpectImage.draw(in: CGRect(x: 0, y: upExpectHeight, width: expectWidth, height: downExpectHeight))
                 let jointImage = UIGraphicsGetImageFromCurrentImageContext()
                 UIGraphicsEndImageContext()
                 self.headerBackgroundImage = jointImage
-                self.backStretchImageView.image = downExpectImage.cut(rect: CGRect(x: 0, y: 0, width: expectWidth, height: 10))
+                self.backStretchImageView.image = downExpectImage.cut(rect: CGRect(x: 0, y: 0, width: expectWidth, height: 1))
             }
+        }).disposed(by: disposeBag)
+        
+        NotificationCenter.default.rx.notification(Notification.Name.WYScreenEdgePopGestureCancelled).subscribe(onNext: {[unowned self] _ in
+            self.navigationController?.navigationBar.setBackgroundImage(self.headerUpPartNavBackgroundImage, for: UIBarMetrics.default)
         }).disposed(by: disposeBag)
     }
     
@@ -124,10 +146,10 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 //        self.navigationController?.navigationBar.setBackgroundImage(self.imageMostColor.image(), for: UIBarMetrics.default)
-        self.navigationController?.navigationBar.titleTextAttributes = [
-            NSAttributedString.Key.foregroundColor : UIColor.white,
-            NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 20)
-        ]
+//        self.navigationController?.navigationBar.titleTextAttributes = [
+//            NSAttributedString.Key.foregroundColor : UIColor.white,
+//            NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 20)
+//        ]
         let right1 = UIBarButtonItem(image: UIImage(named: "em_playlist_detail_icn_search"), style: .plain, target: self, action: #selector(rightBarBtnClick))
         right1.tintColor = .white
         let right2 = UIBarButtonItem(image: UIImage(named: "em_playlist_moredot"), style: .plain, target: self, action: #selector(rightBarBtnClick))
@@ -174,19 +196,19 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
         self.present(vc, animated: true, completion: nil)
     }
     
-    lazy var beltMinOffset = self.tableHeaderView.beltBackgroundView.frame.origin.y
-    lazy var beltMaxOffset = self.tableHeaderView.beltBackgroundView.frame.midY
+    lazy var beltMinOffsetY = self.tableHeaderView.beltBackgroundView.frame.origin.y
+    lazy var beltMaxOffsetY = self.tableHeaderView.beltBackgroundView.frame.midY
     lazy var beltHeight = self.tableHeaderView.beltBackgroundView.bounds.height
     lazy var beltWidth = self.tableHeaderView.beltBackgroundView.bounds.width
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
-        
-        if offsetY < beltMinOffset {
+
+        if offsetY < beltMinOffsetY {
             self.tableHeaderView.beltBackgroundView.alpha = 1
             self.tableHeaderView.beltBackgroundView.transform = CGAffineTransform(scaleX: 1, y: 1)
-        }else if beltMinOffset <= offsetY && offsetY <= beltMaxOffset {
-            let deltaH = offsetY - beltMinOffset
+        }else if beltMinOffsetY <= offsetY && offsetY <= beltMaxOffsetY {
+            let deltaH = offsetY - beltMinOffsetY
 //            let deltaW = deltaH/beltHeight * beltWidth
             let transformHeight = beltHeight - deltaH * 2
             let ratio = transformHeight/beltHeight
@@ -194,11 +216,11 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
             let transformAplha = ratio - 0.6 >= 0 ? ratio - 0.6 : 0
             self.tableHeaderView.beltBackgroundView.alpha = transformAplha
             self.tableHeaderView.beltBackgroundView.transform = CGAffineTransform(scaleX: ratio, y: ratio)
-        }else{// offsetY > beltMaxOffset
+        }else{// offsetY > beltMaxOffsetY
             self.tableHeaderView.beltBackgroundView.alpha = 0
             self.tableHeaderView.beltBackgroundView.transform = CGAffineTransform(scaleX: 0, y: 0)
         }
-
+        
         if offsetY > 0 { // 上拉
             guard let headerBackgroundImage = self.headerBackgroundImage else { return }
             guard offsetY < headerBackgroundImage.size.height else {return}
@@ -208,6 +230,7 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
             let cutW : CGFloat = WY_SCREEN_WIDTH
             let navBackgroundImage = headerBackgroundImage.cut(rect: CGRect(x: cutX, y: cutY, width: cutW, height: cutH))?.resizableImage(withCapInsets: UIEdgeInsets.zero, resizingMode: UIImage.ResizingMode.stretch)
             self.navigationController?.navigationBar.setBackgroundImage(navBackgroundImage, for: UIBarMetrics.default)
+            self.headerUpPartNavBackgroundImage = navBackgroundImage
         }else{ // 下拉
             let increment = abs(offsetY)
             
@@ -221,7 +244,29 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
 //            print("frame:",self.tableHeaderView.backgroundImageView.frame)
             
             backStretchImageView.frame = CGRect(x: 0, y: -increment, width: WY_SCREEN_WIDTH, height: increment)
-            backStretchImageView.backgroundColor = .black
+        }
+        
+        if offsetY > 100 {
+            titleLabel.text = self.tableHeaderView.titleLabel.text
+            guard let text = titleLabel.text else { return }
+            let titleWidth = text.boundingRect(with: CGSize(width: WY_SCREEN_WIDTH, height: 200), font: titleLabel.font).width
+            let minus = titleWidth - titleLabel.bounds.width
+            guard minus > 0 else {return}
+            titleLabel.frame.size.width = titleWidth
+            
+            let moveAnim = CABasicAnimation(keyPath: "position.x")
+            moveAnim.fromValue = titleLabel.center.x
+            moveAnim.toValue = titleLabel.center.x - minus
+            moveAnim.repeatCount = MAXFLOAT
+            moveAnim.duration = 5
+            moveAnim.fillMode = CAMediaTimingFillMode.forwards
+            moveAnim.beginTime = CACurrentMediaTime() + 1
+            moveAnim.isRemovedOnCompletion = false
+            titleLabel.layer.add(moveAnim, forKey: "moveAnim")
+        }else{
+            titleLabel.text = "歌单"
+            titleLabel.frame.size.width = self.navigationItem.titleView!.bounds.size.width
+            titleLabel.layer.removeAllAnimations()
         }
         
     }

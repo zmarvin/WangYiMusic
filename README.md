@@ -9,6 +9,6 @@
 ## 效果图 
 （ 考虑到文件大小，降低了渲染效果。）
 
-![Examples](_Gifs/播放.gif)![Examples](_Gifs/主页.gif)![Examples](_Gifs/歌单.gif)
+![Examples](_Gifs/播放1.gif)![Examples](_Gifs/主页.gif)![Examples](_Gifs/歌单.gif)
 
 

@@ -14,7 +14,7 @@ import UIKit
 
 public class GXSegmentTitleView: UIView {
     public weak var delegate: GXSegmentTitleViewDelegate?
-    
+    public let backgroundImageView = UIImageView()
     private let GXCellID: String = "GXCellID"
     private var config: Configuration!
     private var titles: [String] = []
@@ -104,6 +104,11 @@ public extension GXSegmentTitleView {
 fileprivate extension GXSegmentTitleView {
     /// 设置内容
     func setupSubviews() {
+        self.addSubview(self.backgroundImageView)
+        self.backgroundImageView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+        self.collectionView.backgroundColor = .clear
         self.addSubview(self.collectionView)
         if self.config.isShowBottomLine {
             self.addSubview(self.underline)
