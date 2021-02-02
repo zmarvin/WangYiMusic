@@ -36,7 +36,7 @@ class PlayListPlazaContentBoutiqueController: UICollectionViewController,UIViewC
     
     @objc func requestData(cat: String?) {
         
-        self.collectionView.mj_header = MJRefreshGifHeader(custom: { [unowned self] in
+        self.collectionView.mj_header = MJRefreshGifHeader(refreshingBlock: { [unowned self] in
             API.get_boutiquePlayList(limit:18 ,cat: cat).subscribe(onSuccess: {modes in
                 self.dataModels = modes
                 self.collectionView.reloadData()
@@ -44,7 +44,7 @@ class PlayListPlazaContentBoutiqueController: UICollectionViewController,UIViewC
             }, onFailure: {err in
                 self.collectionView.mj_header?.endRefreshing()
             }).disposed(by: disposeBag)
-        }).refresh()
+        }).config().refresh()
     }
     
     required init?(coder: NSCoder) {

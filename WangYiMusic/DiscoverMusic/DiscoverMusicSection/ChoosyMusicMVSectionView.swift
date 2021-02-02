@@ -20,7 +20,7 @@ class ChoosyMusicMVSectionView: UIView ,UICollectionViewDelegate,UICollectionVie
     weak var myDelegate : ChoosyMusicMVDelegate?
     
     var collectionView : UICollectionView
-    var reuseIdentifier : String = "ChoosyMusicMVSectionView"
+    var reuseIdentifier : String = NSStringFromClass(ChoosyMusicMVSectionView.self)
     var middleCellIndexPath : IndexPath = IndexPath(row: 0 , section: 0)
     
     override init(frame: CGRect) {
@@ -42,7 +42,6 @@ class ChoosyMusicMVSectionView: UIView ,UICollectionViewDelegate,UICollectionVie
         self.collectionView.register(ChoosyMusicMVSectionCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
-//        self.collectionView.decelerationRate = UIScrollView.DecelerationRate.fast
         self.collectionView.decelerationRate = UIScrollView.DecelerationRate(rawValue: 0.1)
         self.collectionView.setValue(0.00001, forKeyPath: "_velocityScaleFactor")
         NotificationCenter.default.addObserver(self, selector: #selector(choosyMusicIsPlayMV), name: NSNotification.Name(rawValue: "choosyMusicIsPlayMV"), object: nil)

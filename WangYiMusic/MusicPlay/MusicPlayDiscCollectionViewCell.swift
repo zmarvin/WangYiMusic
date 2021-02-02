@@ -112,11 +112,7 @@ class MusicPlayDiscCollectionViewCell: UICollectionViewCell, CAAnimationDelegate
         self.animationDidStart?()
         self.animationDidStart = nil
     }
-    
-    func isAnimating() -> Bool {
-        return self.discImageView.layer.speed == 1
-    }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

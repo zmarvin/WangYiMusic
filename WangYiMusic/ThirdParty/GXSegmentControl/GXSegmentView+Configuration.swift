@@ -75,7 +75,7 @@ public extension GXSegmentTitleView {
         /// 标题选中时的缩放比例（自己根据实际情况调整）
         public var titleSelectedFontScale: CGFloat = 1
         /// 标题的边距
-        public var titleMargin: CGFloat = 17.5
+        public var titleMargin: CGFloat = 18
         /// 标题的固定宽度（默认0为动态宽度，大于0则设置为固定宽度）
         public var titleFixedWidth: CGFloat = 0.0
         

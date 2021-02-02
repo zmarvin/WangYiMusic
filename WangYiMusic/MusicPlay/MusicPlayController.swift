@@ -198,7 +198,7 @@ class MusicPlayController: UIViewController {
         }).disposed(by: disposeBag)
         
         Observable.combineLatest(MusicPlayManager.shared.rx.observe(\.isPlaying), discCollectionView.rx.observe(\.isScrolling))
-            .delaySubscription(RxTimeInterval.seconds(Int(musicPlayControllerTransitionAnimateDuration)), scheduler: MainScheduler.instance)
+            .delaySubscription(RxTimeInterval.milliseconds(Int(musicPlayControllerTransitionAnimateDuration*1000)), scheduler: MainScheduler.instance)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] isPlaying,isScrolling in
                 if isPlaying && !isScrolling{

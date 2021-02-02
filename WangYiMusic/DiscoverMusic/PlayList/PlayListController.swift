@@ -81,8 +81,6 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
     func setupState() {
         self.tableHeaderView.imageView.rx.observe(\.image).subscribe(onNext:{ [unowned self] image in
             if let image = image {
-//                let imageMostColor = UIColor.mostColor(with: image)
-//                self.tableView.backgroundColor = imageMostColor
                 
                 let upExpectHeight = WY_NAV_BAR_HEIGHT + WY_STATUS_BAR_HEIGHT
                 let downExpectHeight = self.tableHeaderView.imageViewHeight
@@ -106,7 +104,6 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
                 self.navigationController?.navigationBar.setBackgroundImage(upExpectImage, for: UIBarMetrics.default)
                 self.tableHeaderView.backgroundImageView.image = downExpectImage
                 
-                self.headerUpPartNavBackgroundImage = upExpectImage
                 UIGraphicsBeginImageContext(CGSize(width: expectWidth, height: expectHeight))
                 upExpectImage.draw(in: CGRect(origin: .zero, size: CGSize(width: expectWidth, height: upExpectHeight)))
                 downExpectImage.draw(in: CGRect(x: 0, y: upExpectHeight, width: expectWidth, height: downExpectHeight))
@@ -114,12 +111,10 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
                 UIGraphicsEndImageContext()
                 self.headerBackgroundImage = jointImage
                 self.backStretchImageView.image = downExpectImage.cut(rect: CGRect(x: 0, y: 0, width: expectWidth, height: 1))
+                self.headerUpPartNavBackgroundImage = upExpectImage
             }
         }).disposed(by: disposeBag)
         
-        NotificationCenter.default.rx.notification(Notification.Name.WYScreenEdgePopGestureCancelled).subscribe(onNext: {[unowned self] _ in
-            self.navigationController?.navigationBar.setBackgroundImage(self.headerUpPartNavBackgroundImage, for: UIBarMetrics.default)
-        }).disposed(by: disposeBag)
     }
     
     @objc func setUpData() {
@@ -143,13 +138,18 @@ class PlayListController: UIViewController, UITableViewDataSource, UITableViewDe
         }).disposed(by: disposeBag)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        self.navigationController?.navigationBar.setBackgroundImage(self.imageMostColor.image(), for: UIBarMetrics.default)
 //        self.navigationController?.navigationBar.titleTextAttributes = [
 //            NSAttributedString.Key.foregroundColor : UIColor.white,
 //            NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 20)
 //        ]
+        self.navigationController?.navigationBar.setBackgroundImage(self.headerUpPartNavBackgroundImage, for: UIBarMetrics.default)
+
         let right1 = UIBarButtonItem(image: UIImage(named: "em_playlist_detail_icn_search"), style: .plain, target: self, action: #selector(rightBarBtnClick))
         right1.tintColor = .white
         let right2 = UIBarButtonItem(image: UIImage(named: "em_playlist_moredot"), style: .plain, target: self, action: #selector(rightBarBtnClick))

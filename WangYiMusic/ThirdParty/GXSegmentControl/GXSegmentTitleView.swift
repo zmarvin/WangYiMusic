@@ -12,9 +12,9 @@ import UIKit
     @objc optional func segmentTitleView(_ page: GXSegmentTitleView, at index: Int)
 }
 
-public class GXSegmentTitleView: UIView {
+public class GXSegmentTitleView: UIImageView {
     public weak var delegate: GXSegmentTitleViewDelegate?
-    public let backgroundImageView = UIImageView()
+
     private let GXCellID: String = "GXCellID"
     private var config: Configuration!
     private var titles: [String] = []
@@ -71,6 +71,7 @@ public extension GXSegmentTitleView {
     func setupSegmentTitleView(config: Configuration, titles: [String]) {
         self.config = config
         self.titles = titles
+        self.isUserInteractionEnabled = true
         self.setupSubviews()
         self.updateConfiguration()
         self.setSelectIndex(at: 0)
@@ -104,10 +105,7 @@ public extension GXSegmentTitleView {
 fileprivate extension GXSegmentTitleView {
     /// 设置内容
     func setupSubviews() {
-        self.addSubview(self.backgroundImageView)
-        self.backgroundImageView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
-        }
+        
         self.collectionView.backgroundColor = .clear
         self.addSubview(self.collectionView)
         if self.config.isShowBottomLine {

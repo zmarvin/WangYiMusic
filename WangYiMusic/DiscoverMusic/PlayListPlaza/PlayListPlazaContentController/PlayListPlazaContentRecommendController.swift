@@ -58,7 +58,7 @@ class PlayListPlazaContentRecommendController: UIViewController, UICollectionVie
     }
     
     func setUpData() {
-        self.underCollectionView.mj_header = MJRefreshGifHeader(custom: { [unowned self] in
+        self.underCollectionView.mj_header = MJRefreshGifHeader(refreshingBlock: { [unowned self] in
             API.get_playList(limit:18,cat: nil).subscribe(onSuccess: { models in
                 self.topCarouselModels = (0...2).map{models[$0]}
                 self.underCollectionModels = (3..<models.count).map{models[$0]}
@@ -68,7 +68,7 @@ class PlayListPlazaContentRecommendController: UIViewController, UICollectionVie
             }, onFailure: { err in
                 self.underCollectionView.mj_header?.endRefreshing()
             }).disposed(by: disposeBag)
-        }).refresh()
+        }).config().refresh()
     }
     
     func setUpView() {

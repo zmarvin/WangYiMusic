@@ -66,7 +66,7 @@ class DiscoverMusicController: UITableViewController,DiscoverMusicCellDelegate, 
 
     func setUpData() {
         
-        self.tableView.mj_header = MJRefreshGifHeader(custom: { [unowned self] in
+        self.tableView.mj_header = MJRefreshGifHeader(refreshingBlock: { [unowned self] in
             API.get_superZip.subscribe(onSuccess: { overallModels in
                 let sectionModels = overallModels.sorted {sectionSortedArry.firstIndex(of: $0.ID)! < sectionSortedArry.firstIndex(of: $1.ID)!}// 排序
                 self.overallModels = sectionModels
@@ -84,7 +84,7 @@ class DiscoverMusicController: UITableViewController,DiscoverMusicCellDelegate, 
             }, onFailure: { error in
                 print(error)
             }).disposed(by: disposeBag)
-        }).refresh()
+        }).config().refresh()
     }
     
     var searchController : SearchViewController = SearchViewController(searchResultsController: nil)

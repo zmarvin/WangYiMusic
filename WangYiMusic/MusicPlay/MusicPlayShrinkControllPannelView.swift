@@ -248,13 +248,6 @@ class MusicPlayShrinkControllPannelView: UIButton, UINavigationControllerDelegat
         }
         return nil
     }
-    
-    let tabBar : UITabBar? = {
-        if let tabbarVC = UIApplication.shared.keyWindow?.rootViewController as? UITabBarController{
-            return tabbarVC.tabBar
-        }
-        return nil
-    }()
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

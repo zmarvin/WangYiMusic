@@ -14,6 +14,8 @@ class PlayListPlazaAllBoutiqueCategoryController: UIViewController, UICollection
     var API = RxPlayListPlazaAPI()
     var dataModels : [PlayListPlazaCategoryModel]?
     var didSelectedItemCallBack : ((PlayListPlazaCategoryModel) -> Void)?
+    let reuseId = NSStringFromClass(PlayListPlazaAllBoutiqueCategoryController.self)
+    
     lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let cV = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -23,7 +25,7 @@ class PlayListPlazaAllBoutiqueCategoryController: UIViewController, UICollection
         layout.sectionInset = UIEdgeInsets(top: 15, left: 15, bottom: 0, right: 15)
         cV.dataSource = self
         cV.delegate = self
-        cV.register(PlayListAllCategoryCell.self, forCellWithReuseIdentifier: "PlayListPlazaAllBoutiqueCategoryController")
+        cV.register(PlayListAllCategoryCell.self, forCellWithReuseIdentifier: reuseId)
         cV.backgroundColor = .white
         return cV
     }()
@@ -89,7 +91,7 @@ class PlayListPlazaAllBoutiqueCategoryController: UIViewController, UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlayListPlazaAllBoutiqueCategoryController", for: indexPath) as! PlayListAllCategoryCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseId, for: indexPath) as! PlayListAllCategoryCell
         guard let model = self.dataModels?[indexPath.row] else { return cell }
         cell.titleBtn.setTitle(model.name, for: UIControl.State.normal)
         cell.titleBtn.titleLabel?.font = .systemFont(ofSize: 15)

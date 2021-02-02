@@ -40,13 +40,13 @@ class PlayListPlazaContentCommonController: UICollectionViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.collectionView.mj_header = MJRefreshGifHeader(custom: { [unowned self] in
+        self.collectionView.mj_header = MJRefreshGifHeader(refreshingBlock: { [unowned self] in
             API.get_playList(limit:18,cat:self.categoryModel.name).subscribe(onSuccess: {modes in
                 self.dataModels = modes
                 self.collectionView.reloadData()
                 self.collectionView.mj_header?.endRefreshing()
             }).disposed(by: self.disposeBag)
-        }).refresh()
+        }).config().refresh()
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
