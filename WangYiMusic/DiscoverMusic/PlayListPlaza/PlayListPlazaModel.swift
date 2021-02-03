@@ -9,8 +9,8 @@
 import Foundation
 import HandyJSON
 
-class PlayListPlazaModel: HandyJSON {
-    required init() {}
+class PlayListPlazaModel: NSObject, HandyJSON {
+    required override init() {}
     var id : Int = 0
     var name : String = ""
     var subscribers : [Any]?

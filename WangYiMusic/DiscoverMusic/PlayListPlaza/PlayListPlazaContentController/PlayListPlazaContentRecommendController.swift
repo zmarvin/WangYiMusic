@@ -11,16 +11,16 @@ import RxSwift
 import Kingfisher
 
 protocol PlayListPlazaTopCarouselViewScrollCenterCellObserver : class {
-    func playListPlazaContentRecommendControllerTopCarouselViewScrollCenter(cell:PlayListPlazaCarouselCell,indexPath:IndexPath)
+    func playListPlazaContentRecommendControllerTopCarouselViewScrollCenter(cell:PlayListPlazaCarouselCell,model:PlayListPlazaModel,indexPath:IndexPath)
 }
 
-class PlayListPlazaContentRecommendController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
-    let disposeBag = DisposeBag()
-    var API = RxPlayListPlazaAPI()
+class PlayListPlazaContentRecommendController: PlayListPlazaContentBaseController, UICollectionViewDelegate, UICollectionViewDataSource {
+
     let topCarouselViewHeight : CGFloat = 245
     var topCarouselModels : [PlayListPlazaModel] = [PlayListPlazaModel]()
     var underCollectionModels : [PlayListPlazaModel] = [PlayListPlazaModel]()
     weak var topCarouselViewScrollCenterCellObserver : PlayListPlazaTopCarouselViewScrollCenterCellObserver?
+    var topCarouselCenterCellModel : PlayListPlazaModel?
     
     lazy var topCarouselView : UICollectionView = {
         let layout = PlayListPlazaCarouselLayout()
@@ -60,6 +60,7 @@ class PlayListPlazaContentRecommendController: UIViewController, UICollectionVie
     func setUpData() {
         self.underCollectionView.mj_header = MJRefreshGifHeader(refreshingBlock: { [unowned self] in
             API.get_playList(limit:18,cat: nil).subscribe(onSuccess: { models in
+                self.dataModels = models
                 self.topCarouselModels = (0...2).map{models[$0]}
                 self.underCollectionModels = (3..<models.count).map{models[$0]}
                 self.topCarouselView.reloadData()
@@ -111,7 +112,11 @@ class PlayListPlazaContentRecommendController: UIViewController, UICollectionVie
             guard self.topCarouselModels.count > 0 else { return cell }
             let model = self.topCarouselModels[index]
             cell.titleLabel.text = model.name
-            cell.imageView.kf.setImageAspectFillScale(with: URL(string: model.coverImgUrl))
+            cell.imageView.kf.setImageAspectFillScale(with: URL(string: model.coverImgUrl)) { (image, error, cacheType, url) in
+                guard let url = url else {return}
+                Self.downloadedReadyRenderImageKeys.append(url)
+                Self.downloadedReadyRenderImageKeysSubject.onNext(Self.downloadedReadyRenderImageKeys)
+            }
             cell.playCountLabel.text = model.playCount
             return cell
         case _ where collectionView === underCollectionView:
@@ -213,7 +218,12 @@ class PlayListPlazaContentRecommendController: UIViewController, UICollectionVie
         leftCell.frostedGlassView.alpha = 0.5
         rightCell.frostedGlassView.alpha = 0.5
         
-        self.topCarouselViewScrollCenterCellObserver?.playListPlazaContentRecommendControllerTopCarouselViewScrollCenter(cell: cell, indexPath: indexPath)
+        let modelIndex = self.topCarouselViewInfinityIndexArr[indexPath.row]
+        guard self.topCarouselModels.count > 0 else { return }
+        let model = self.topCarouselModels[modelIndex]
+        
+        self.topCarouselViewScrollCenterCellObserver?.playListPlazaContentRecommendControllerTopCarouselViewScrollCenter(cell: cell, model:model, indexPath: indexPath)
+        self.topCarouselCenterCellModel = model
     }
     
 }

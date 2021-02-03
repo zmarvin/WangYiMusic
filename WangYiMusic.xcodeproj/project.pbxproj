@@ -125,6 +125,7 @@
 		04093DAF25BF0D9500AE90CD /* EMStationModule.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 04093DAB25BF0D9500AE90CD /* EMStationModule.bundle */; };
 		04093DB025BF0D9500AE90CD /* EMTabbarIcon.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 04093DAC25BF0D9500AE90CD /* EMTabbarIcon.bundle */; };
 		04093DC225BF133B00AE90CD /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 04093DC125BF133B00AE90CD /* libc++.tbd */; };
+		0422E29F25CA5EC0008136BF /* PlayListPlazaContentBaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0422E29E25CA5EC0008136BF /* PlayListPlazaContentBaseController.swift */; };
 		0430AF3F25C3A0D300CF76E3 /* MJRefreshGifHeader+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0430AF3E25C3A0D300CF76E3 /* MJRefreshGifHeader+Extensions.swift */; };
 		0430AF6F25C5102A00CF76E3 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0430AF6E25C5102A00CF76E3 /* Array+Extensions.swift */; };
 		0430AF7B25C54A8B00CF76E3 /* UIViewController+DidLayoutInject.m in Sources */ = {isa = PBXBuildFile; fileRef = 0430AF7A25C54A8B00CF76E3 /* UIViewController+DidLayoutInject.m */; };
@@ -261,6 +262,7 @@
 		04093DAB25BF0D9500AE90CD /* EMStationModule.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = EMStationModule.bundle; sourceTree = "<group>"; };
 		04093DAC25BF0D9500AE90CD /* EMTabbarIcon.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = EMTabbarIcon.bundle; sourceTree = "<group>"; };
 		04093DC125BF133B00AE90CD /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		0422E29E25CA5EC0008136BF /* PlayListPlazaContentBaseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayListPlazaContentBaseController.swift; sourceTree = "<group>"; };
 		0430AF3E25C3A0D300CF76E3 /* MJRefreshGifHeader+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MJRefreshGifHeader+Extensions.swift"; sourceTree = "<group>"; };
 		0430AF6E25C5102A00CF76E3 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		0430AF7925C54A8B00CF76E3 /* UIViewController+DidLayoutInject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+DidLayoutInject.h"; sourceTree = "<group>"; };
@@ -381,9 +383,9 @@
 				04093C2E25BF06A700AE90CD /* PlayListPlazaCell */,
 				04093C3525BF06A700AE90CD /* PlayListPlazaContentController */,
 				04093C2A25BF06A700AE90CD /* PlayListPlazaAllBoutiqueCategoryController.swift */,
-				04093C2B25BF06A700AE90CD /* PlayListPlazaCategoryModel.swift */,
 				04093C2C25BF06A700AE90CD /* PlayListPlazaOverallController.swift */,
 				04093C2D25BF06A700AE90CD /* PlayListPlazaOverallCategoryController.swift */,
+				04093C2B25BF06A700AE90CD /* PlayListPlazaCategoryModel.swift */,
 				04093C3225BF06A700AE90CD /* PlayListPlazaModel.swift */,
 				04093C3325BF06A700AE90CD /* RxPlayListPlazaAPI.swift */,
 				04093C3425BF06A700AE90CD /* PlayListPlazaCarouselLayout.swift */,
@@ -405,6 +407,7 @@
 		04093C3525BF06A700AE90CD /* PlayListPlazaContentController */ = {
 			isa = PBXGroup;
 			children = (
+				0422E29E25CA5EC0008136BF /* PlayListPlazaContentBaseController.swift */,
 				04093C3625BF06A700AE90CD /* PlayListPlazaContentCommonController.swift */,
 				04093C3725BF06A700AE90CD /* PlayListPlazaContentBoutiqueController.swift */,
 				04093C3825BF06A700AE90CD /* PlayListPlazaContentRecommendController.swift */,
@@ -767,6 +770,7 @@
 				04093D5725BF070200AE90CD /* LLSnakePageControl.swift in Sources */,
 				04093C8D25BF06A700AE90CD /* HotSearchModel.swift in Sources */,
 				04093C9025BF06A700AE90CD /* CalendarSectionView.swift in Sources */,
+				0422E29F25CA5EC0008136BF /* PlayListPlazaContentBaseController.swift in Sources */,
 				04093CB325BF06E700AE90CD /* UIImage+Extensions.swift in Sources */,
 				04093D5E25BF070200AE90CD /* GXSegmentView+Configuration.swift in Sources */,
 				04093D5825BF070200AE90CD /* LLCycleScrollViewCell.swift in Sources */,

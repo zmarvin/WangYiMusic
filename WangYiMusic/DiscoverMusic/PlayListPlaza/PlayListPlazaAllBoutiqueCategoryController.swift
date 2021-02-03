@@ -75,13 +75,13 @@ class PlayListPlazaAllBoutiqueCategoryController: UIViewController, UICollection
             make.width.equalTo(delBtn.snp.height)
         }
         
-        delBtn.rx.tap.subscribe(onNext: {
+        delBtn.rx.tap.subscribe(onNext: {[unowned self] in
             self.dismiss(animated: true, completion: nil)
         }).disposed(by: disposeBag)
         
-        API.get_playListAllBoutiqueCategory().subscribe(onSuccess: {models in
-            self.dataModels = models
-            self.collectionView.reloadData()
+        API.get_playListAllBoutiqueCategory().subscribe(onSuccess: {[weak self] models in
+            self?.dataModels = models
+            self?.collectionView.reloadData()
         }).disposed(by: disposeBag)
 
     }
@@ -104,6 +104,9 @@ class PlayListPlazaAllBoutiqueCategoryController: UIViewController, UICollection
             callBack(model)
             self.dismiss(animated: true, completion: nil)
         }
+    }
+    deinit {
+        print("PlayListPlazaAllBoutiqueCategoryController销毁了")
     }
 }
 

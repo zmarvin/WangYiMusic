@@ -8,12 +8,16 @@
 
 import Foundation
 import RxSwift
-class PlayListPlazaContentBoutiqueController: UICollectionViewController,UIViewControllerTransitioningDelegate{
-    let disposeBag = DisposeBag()
-    var API = RxPlayListPlazaAPI()
-    var dataModels : [PlayListPlazaModel]?
+class PlayListPlazaContentBoutiqueController: PlayListPlazaContentBaseController ,UICollectionViewDataSource ,UICollectionViewDelegate,UIViewControllerTransitioningDelegate{
+    
+    private let collectionView : UICollectionView
+    private let cellReuseId = NSStringFromClass(PlayListPlazaContentBoutiqueController.self)
+    private let headerReuseId = NSStringFromClass(PlayListPlazaContentBoutiqueControllerSectionHeader.self)
+
     init() {
         let layout = UICollectionViewFlowLayout()
+        self.collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        super.init(nibName: nil, bundle: nil)
         layout.minimumLineSpacing = 10
         layout.minimumInteritemSpacing = 10
         let itemWidth = (UIScreen.main.bounds.width - 50)/3
@@ -22,11 +26,15 @@ class PlayListPlazaContentBoutiqueController: UICollectionViewController,UIViewC
         layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 50)
         layout.sectionInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
         layout.scrollDirection = UICollectionView.ScrollDirection.vertical
-        super.init(collectionViewLayout: layout)
-        
-        self.collectionView.register(PlayListPlazaCommonCell.self, forCellWithReuseIdentifier: "PlayListPlazaContentBoutiqueController")
-        self.collectionView.register(PlayListPlazaContentBoutiqueControllerSectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "PlayListPlazaContentBoutiqueControllerSectionHeader")
+        self.collectionView.register(PlayListPlazaCommonCell.self, forCellWithReuseIdentifier: cellReuseId)
+        self.collectionView.register(PlayListPlazaContentBoutiqueControllerSectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerReuseId)
+        self.collectionView.dataSource = self
+        self.collectionView.delegate = self
         self.collectionView.backgroundColor = .white
+        self.view.addSubview(self.collectionView)
+        self.collectionView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
     }
     
     override func viewDidLoad() {
@@ -51,23 +59,27 @@ class PlayListPlazaContentBoutiqueController: UICollectionViewController,UIViewC
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.dataModels?.count ?? 0
     }
     
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlayListPlazaContentBoutiqueController", for: indexPath) as! PlayListPlazaCommonCell
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseId, for: indexPath) as! PlayListPlazaCommonCell
         guard let model = self.dataModels?[indexPath.row] else { return cell }
         cell.titleLabel.text = model.name
-        cell.imageView.kf.setImageAspectFillScale(with: URL(string: model.coverImgUrl))
+        cell.imageView.kf.setImageAspectFillScale(with: URL(string: model.coverImgUrl)){ (image, error, cacheType, url) in
+            guard indexPath.row == 0, let url = url else {return}
+            Self.downloadedReadyRenderImageKeys.append(url)
+            Self.downloadedReadyRenderImageKeysSubject.onNext(Self.downloadedReadyRenderImageKeys)
+        }
         cell.playCountLabel.text = model.playCount
         cell.markImageView.image = UIImage(named: "em_playlist_sup_hot_big")
         return cell
         
     }
     
-    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView{
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "PlayListPlazaContentBoutiqueControllerSectionHeader", for: indexPath)
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView{
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerReuseId, for: indexPath)
         
         if indexPath.section == 0 {
             let headerFilterBtn = UIButton()
@@ -75,16 +87,7 @@ class PlayListPlazaContentBoutiqueController: UICollectionViewController,UIViewC
             headerFilterBtn.setImage(UIImage(named: "em_playlist_btn_filter"), for: UIControl.State.normal)
             headerFilterBtn.setTitleColor(UIColor.black, for: UIControl.State.normal)
             headerFilterBtn.titleLabel?.font = .systemFont(ofSize: 14)
-//            headerFilterBtn.addTarget(self, action: #selector(headerFilterBtnClick), for: UIControl.Event.touchUpInside)
-            headerFilterBtn.rx.tap.subscribe(onNext: {
-                let vc = PlayListPlazaAllBoutiqueCategoryController()
-                vc.modalPresentationStyle = .custom
-                vc.transitioningDelegate = self
-                vc.didSelectedItemCallBack = { categoryModel in
-                    self.requestData(cat: categoryModel.name)
-                }
-                self.present(vc, animated: true, completion: nil)
-            }).disposed(by: disposeBag)
+            headerFilterBtn.addTarget(self, action: #selector(headerFilterBtnClick), for: UIControl.Event.touchUpInside)
             header.addSubview(headerFilterBtn)
             headerFilterBtn.snp.makeConstraints { (make) in
                 make.height.equalTo(25)
@@ -97,7 +100,7 @@ class PlayListPlazaContentBoutiqueController: UICollectionViewController,UIViewC
         return header
     }
     
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("section:\(indexPath.section),item:\(indexPath.item)")
         guard let model = self.dataModels?[indexPath.row] else { return }
         let vc = PlayListController(musicId: model.id)
@@ -107,6 +110,16 @@ class PlayListPlazaContentBoutiqueController: UICollectionViewController,UIViewC
     // MARK: - UIViewControllerTransitioningDelegate
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         return PlayListPlazaAllBoutiqueCategoryPresentationController(presentedViewController: presented, presenting: presenting)
+    }
+    
+    @objc func headerFilterBtnClick(){
+        let vc = PlayListPlazaAllBoutiqueCategoryController()
+        vc.modalPresentationStyle = .custom
+        vc.transitioningDelegate = self
+        vc.didSelectedItemCallBack = { categoryModel in
+            self.requestData(cat: categoryModel.name)
+        }
+        self.present(vc, animated: true, completion: nil)
     }
 }
 

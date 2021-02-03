@@ -11,35 +11,6 @@ import Accelerate
 
 extension UIImage {
     
-    func gradient() -> UIImage? {
-        
-        UIGraphicsBeginImageContextWithOptions(self.size, true, 1)
-        let context = UIGraphicsGetCurrentContext()
-        context?.saveGState()
-        let colorSpace = UIColor.white.cgColor.colorSpace
-        
-        let cgColor1 = UIColor(white: 1, alpha: 0).cgColor
-        let cgColor2 = UIColor(white: 1, alpha: 1).cgColor
-        let cgColor3 = UIColor(white: 1, alpha: 0).cgColor
-        
-        let defaultAllocator = CFAllocatorGetDefault().takeUnretainedValue()
-        let cfColors = CFArrayCreateMutable(defaultAllocator, 0, nil)
-        CFArrayAppendValue(cfColors, Unmanaged.passRetained(cgColor1).autorelease().toOpaque())
-        CFArrayAppendValue(cfColors, Unmanaged.passRetained(cgColor2).autorelease().toOpaque())
-        CFArrayAppendValue(cfColors, Unmanaged.passRetained(cgColor3).autorelease().toOpaque())
-
-        let gradient = CGGradient(colorsSpace: colorSpace, colors: cfColors!, locations: nil)
-        
-        let start = CGPoint.zero
-        let end = CGPoint(x: 0, y: self.size.height)
-        
-        context?.drawLinearGradient(gradient!, start: start, end: end, options: [.drawsBeforeStartLocation,.drawsAfterEndLocation])
-        UIGraphicsBeginImageContextWithOptions(self.size, false, 1)
-        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return scaledImage
-    }
-    
     func cut(rect:CGRect) -> UIImage? {
         guard let image = self.cgImage?.cropping(to:rect) else { return nil }
         return UIImage(cgImage: image)

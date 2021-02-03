@@ -9,6 +9,7 @@
 import Foundation
 import SnapKit
 import RxSwift
+
 class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate, PlayListPlazaTopCarouselViewScrollCenterCellObserver {
     let disposeBag = DisposeBag()
     
@@ -97,11 +98,8 @@ class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegat
         config.indicatorAdditionHeightMargin = 2.0
         config.isShowSeparator = false
         config.isShowBottomLine = false
-        
-//        let overlapW : CGFloat = 30
-//        segmentView.frame = CGRect(x: 0, y: 0, width: WY_SCREEN_WIDTH - (allCategoryBtnWidth-overlapW), height: 50)
-        segmentView.frame = CGRect(x: 0, y: 0, width: WY_SCREEN_WIDTH, height: 50)
 
+        segmentView.frame = CGRect(x: 0, y: 0, width: WY_SCREEN_WIDTH, height: 60)
         segmentView.setupSegmentTitleView(config: config, titles: items)
         segmentView.delegate = self
         self.view.addSubview(segmentView)
@@ -134,10 +132,10 @@ class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegat
         pageViewController.dataSource = self
         pageViewController.delegate = self
         self.addChild(pageViewController)
-        self.view.addSubview(pageViewController.view)
+        self.view.insertSubview(pageViewController.view, belowSubview: segmentView)
         pageViewController.view.snp.makeConstraints { (make) in
             make.left.bottom.right.equalToSuperview()
-            make.top.equalTo(segmentView.frame.maxY)
+            make.top.equalTo(self.segmentView.frame.height - 10) // 10是增加颜色特效的范围高度
         }
         
 //        backEffectView.frame = CGRect(x: 0, y: 0, width: WY_SCREEN_WIDTH, height: 100)
@@ -153,6 +151,47 @@ class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegat
         }).disposed(by: disposeBag)
         
         self.segmentTitleView(segmentView, at: 0)
+        
+        PlayListPlazaContentBaseController.renderObservable.subscribe(onNext: { [unowned self] image in
+            let upExpectHeight = WY_NAV_BAR_HEIGHT + WY_STATUS_BAR_HEIGHT
+            let downExpectHeight : CGFloat = self.segmentView.frame.height
+            let expectHeight = upExpectHeight + downExpectHeight
+            let expectWidth = WY_SCREEN_WIDTH
+            
+            let shrinkWidth : CGFloat = 10
+            let shrinkHeight = shrinkWidth * expectHeight/expectWidth
+            let shrinkImage = image.reSize(newSize: CGSize(width: shrinkWidth, height: shrinkHeight), scale: 1)
+            let expectNoBlurImage = shrinkImage?.reSize(newSize: CGSize(width: expectWidth, height: expectHeight), scale: 1)
+            let blurNumber : CGFloat = 25
+            let expectNoGradientImage = UIImage.boxBlurImage( expectNoBlurImage, withBlurNumber: blurNumber)
+            // 添加渐变
+            let cgColor1 = UIColor(white: 1, alpha: 0.5).cgColor
+            let cgColor2 = UIColor(white: 1, alpha: 0.7).cgColor
+            let cgColor3 = UIColor(white: 1, alpha: 1).cgColor
+            let gradientLayer = CAGradientLayer()
+            gradientLayer.frame = CGRect(x: 0, y: 0, width: expectNoGradientImage.size.width, height: expectNoGradientImage.size.height)
+            gradientLayer.locations = [0,0.6,1];
+            gradientLayer.startPoint = CGPoint(x: 0, y: 0)
+            gradientLayer.endPoint = CGPoint(x: 0, y: 1)
+            gradientLayer.colors = [cgColor1,cgColor2,cgColor3]
+            UIGraphicsBeginImageContext(expectNoGradientImage.size)
+            expectNoGradientImage.draw(in: CGRect(x: 0, y: 0, width: expectNoGradientImage.size.width, height: expectNoGradientImage.size.height))
+            gradientLayer.render(in: UIGraphicsGetCurrentContext()!)
+            let wrapExpectImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            guard let expectImage = wrapExpectImage else { return }
+            
+            let upExpectImage = expectImage.cut(rect: CGRect(x: 0, y: 0, width: expectWidth, height: upExpectHeight))?.resizableImage(withCapInsets: UIEdgeInsets.zero, resizingMode: UIImage.ResizingMode.stretch)
+            let downExpectImage = expectImage.cut(rect: CGRect(x: 0, y: upExpectHeight, width: expectWidth, height: downExpectHeight))
+            
+            self.navigationController?.navigationBar.setBackgroundImage(upExpectImage, for: UIBarMetrics.default)
+            self.segmentView.image = downExpectImage
+            self.headerUpPartNavBackgroundImage = upExpectImage
+            
+            let wrapAllCategoryBtnImage = downExpectImage?.cut(rect: self.allCategoryBtn.frame)
+            self.allCategoryBtn.setBackgroundImage(wrapAllCategoryBtnImage, for: UIControl.State.normal)
+            self.allCategoryBtn.setBackgroundImage(wrapAllCategoryBtnImage, for: UIControl.State.highlighted)
+        }).disposed(by: disposeBag)
     }
     
     func setUpGesture() {// 解决uiscrollview和系统的返手势冲突
@@ -172,57 +211,33 @@ class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegat
     }
     
     // MARK: -- PlayListPlazaTopCarouselViewScrollCenterCellObserver
-    func playListPlazaContentRecommendControllerTopCarouselViewScrollCenter(cell:PlayListPlazaCarouselCell,indexPath:IndexPath){
-        guard let image = cell.imageView.image else { return }
-
-        let upExpectHeight = WY_NAV_BAR_HEIGHT + WY_STATUS_BAR_HEIGHT
-        let downExpectHeight : CGFloat = self.segmentView.frame.height
-        let expectHeight = upExpectHeight + downExpectHeight
-        let expectWidth = WY_SCREEN_WIDTH
-        // 缩小尺寸
-        let shrinkWidth : CGFloat = 10
-        let shrinkHeight = shrinkWidth * expectHeight/expectWidth
-        let shrinkImage = image.reSize(newSize: CGSize(width: shrinkWidth, height: shrinkHeight), scale: 1)
-        
-        let wrapExpectImageT = shrinkImage?.reSize(newSize: CGSize(width: expectWidth, height: expectHeight), scale: 1)
-        guard let expectImageT = wrapExpectImageT else { return }
-        // 添加渐变
-        let cgColor1 = UIColor(white: 1, alpha: 0.5).cgColor
-        let cgColor2 = UIColor(white: 1, alpha: 0.7).cgColor
-        let cgColor3 = UIColor(white: 1, alpha: 1).cgColor
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.frame = CGRect(x: 0, y: 0, width: expectImageT.size.width, height: expectImageT.size.height)
-        gradientLayer.locations = [0,0.6,1];
-        gradientLayer.startPoint = CGPoint(x: 0, y: 0)
-        gradientLayer.endPoint = CGPoint(x: 0, y: 1)
-        gradientLayer.colors = [cgColor1,cgColor2,cgColor3]
-        UIGraphicsBeginImageContext(expectImageT.size)
-        expectImageT.draw(in: CGRect(x: 0, y: 0, width: expectImageT.size.width, height: expectImageT.size.height))
-        gradientLayer.render(in: UIGraphicsGetCurrentContext()!)
-        let wrapGradientExpectImageT = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        guard let gradientExpectImageT = wrapGradientExpectImageT else { return }
-        
-        let upExpectImageT = gradientExpectImageT.cut(rect: CGRect(x: 0, y: 0, width: expectWidth, height: upExpectHeight))
-        let downExpectImageT = gradientExpectImageT.cut(rect: CGRect(x: 0, y: upExpectHeight, width: expectWidth, height: downExpectHeight))
-        
-        let blurNumber : CGFloat = 25
-        let upExpectImage = UIImage.boxBlurImage( upExpectImageT, withBlurNumber: blurNumber).resizableImage(withCapInsets: UIEdgeInsets.zero, resizingMode: UIImage.ResizingMode.stretch)
-        let downExpectImage = UIImage.boxBlurImage( downExpectImageT, withBlurNumber: blurNumber)
-        
-        self.navigationController?.navigationBar.setBackgroundImage(upExpectImage, for: UIBarMetrics.default)
-        self.segmentView.image = downExpectImage
-        self.headerUpPartNavBackgroundImage = upExpectImage
-        
-        let wrapAllCategoryBtnImage = downExpectImage.cut(rect: self.allCategoryBtn.frame)
-        self.allCategoryBtn.setBackgroundImage(wrapAllCategoryBtnImage, for: UIControl.State.normal)
-        self.allCategoryBtn.setBackgroundImage(wrapAllCategoryBtnImage, for: UIControl.State.highlighted)
-        
+    func playListPlazaContentRecommendControllerTopCarouselViewScrollCenter(cell:PlayListPlazaCarouselCell,model:PlayListPlazaModel,indexPath:IndexPath){
+        self.toRenderImage(with: model)
+    }
+    
+    func pageViewControllerCurrentShowedViewController(viewController:PlayListPlazaContentBaseController) {
+        var model : PlayListPlazaModel?
+        if let vc = viewController as? PlayListPlazaContentRecommendController{
+            model = vc.topCarouselCenterCellModel
+        }else{
+            model = viewController.firstModel
+            if model == nil {
+                viewController.rx.observe(\.firstModel).filter{$0 != nil}.take(1).subscribe(onNext: { [unowned self] model in
+                    self.toRenderImage(with: model)
+                }).disposed(by: disposeBag)
+            }
+        }
+        self.toRenderImage(with: model)
+    }
+    
+    func toRenderImage(with model:PlayListPlazaModel?) {
+        guard let unwrapModel = model else { return }
+        guard let url = URL(string: unwrapModel.coverImgUrl) else { return }
+        PlayListPlazaContentBaseController.toRenderImageKeySubject.onNext(url)
     }
     
     // MARK: -- UIPageViewControllerDataSource
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-     
         guard let index = self.subViewControllers.firstIndex(of: viewController ) else { return nil }
         if index == 0 {
             return nil
@@ -242,6 +257,8 @@ class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegat
         guard let vc = pageViewController.viewControllers?.last else { return }
         guard let index = self.subViewControllers.firstIndex(of: vc) else { return }
         self.segmentView.setSelectIndex(at: index, animated: true)
+        guard let baseController = vc as? PlayListPlazaContentBaseController else { return }
+        self.pageViewControllerCurrentShowedViewController(viewController: baseController)
     }
     // MARK: -- GXSegmentTitleViewDelegate
     func segmentTitleView(_ page: GXSegmentTitleView, at index: Int){
@@ -250,9 +267,12 @@ class PlayListPlazaOverallController: UIViewController,GXSegmentTitleViewDelegat
             return
         }
         let selectedVC = self.subViewControllers[index]
-        self.pageViewController.setViewControllers([selectedVC],direction: direction,animated: false,completion: nil)
+        guard let baseController = selectedVC as? PlayListPlazaContentBaseController else { return }
+        self.pageViewController.setViewControllers([selectedVC],direction: direction,animated: false) {[unowned self] (isCompletion) in
+            self.pageViewControllerCurrentShowedViewController(viewController: baseController)
+        }
     }
-    
+
     deinit {
         print("PlayListPlazaOverallController 销毁了")
     }

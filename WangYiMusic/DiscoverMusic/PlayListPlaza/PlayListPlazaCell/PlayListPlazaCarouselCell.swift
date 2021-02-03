@@ -50,7 +50,6 @@ class PlayListPlazaCarouselCell: UICollectionViewCell {
         titleLabel.font = .systemFont(ofSize: 13)
         
         playCountLabel.textColor = .white
-//        playCountLabel.backgroundColor = UIColor(red: 155/255.0, green: 140/255.0, blue: 160/255.0, alpha: 1)
         
         self.frostedGlassView.backgroundColor = .white
         self.frostedGlassView.alpha = 0

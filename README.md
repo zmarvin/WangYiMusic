@@ -1,6 +1,6 @@
 ## 高仿网易云音乐
 
-* 数据源自[网易云音乐 API](https://github.com/Binaryify/NeteaseCloudMusicApi)，由于接口不全，主页一些section使用的是本地json。
+* 数据源自[网易云音乐 API](https://github.com/Binaryify/NeteaseCloudMusicApi)
 * swift 5编写。
 * StreamingKit实现音频。
 * ijkplayer实现卡片视频。
